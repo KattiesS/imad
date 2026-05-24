@@ -15,6 +15,11 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+        @keyframes swing {
+    0% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
+    100% { transform: rotate(-10deg); }
+}
 
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #050505; font-family: 'Segoe UI', sans-serif; }
         
@@ -40,7 +45,9 @@
             animation-play-state: paused; /* Mặc định đứng yên */
         }
         .is-spinning {
-            animation-play-state: running !important; /* Khi phát thì quay tiếp */
+    animation: spin 4s linear infinite, swing 2s ease-in-out infinite;
+    animation-play-state: running !important;
+}
         }
         
         .skip-icon { width: 35px; height: 35px; fill: #aaa; cursor: pointer; transition: 0.3s; }
