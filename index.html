@@ -41,7 +41,14 @@
             transition: 0.3s;
             box-shadow: 0 0 15px rgba(255,255,255,0.2);
         }
-        .is-spinning { animation: spin 4s linear infinite; }
+        #disc-img {
+    transition: 0.3s;
+    box-shadow: 0 0 15px rgba(255,255,255,0.2);
+}
+.is-spinning {
+    animation: spin 4s linear infinite;
+}
+       
         
         .skip-icon { width: 20px; height: 20px; fill: #aaa; cursor: pointer; transition: 0.3s; }
         .skip-icon:hover { fill: var(--accent-color); }
@@ -72,7 +79,9 @@
         <div class="controls-row">
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
             
-            <div id="disc-btn" onclick="togglePlayPause()"></div>
+            <div id="disc-container" onclick="togglePlayPause()" style="cursor: pointer; position: relative;">
+    <img id="disc-img" src="disc.png" alt="Vinyl" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.2);">
+</div>
             
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
         </div>
@@ -98,7 +107,7 @@
         const video = document.getElementById("bg-video");
         const overlay = document.getElementById("overlay");
         const playerWrapper = document.getElementById("player-wrapper");
-        const discBtn = document.getElementById("disc-btn");
+        const discBtn = document.getElementById("disc-img");
         const progressSlider = document.getElementById("progress-slider");
         const volumeSlider = document.getElementById("volume-slider");
         const currentTimeEl = document.getElementById("current-time");
@@ -110,17 +119,17 @@
             overlay.style.opacity = "0";
             playerWrapper.style.opacity = "1"; 
             playerWrapper.style.pointerEvents = "auto";
-            discBtn.classList.add("is-spinning"); // Bắt đầu quay khi mở
+            discImg.classList.add("is-spinning"); // Bắt đầu quay khi mở
             setTimeout(() => overlay.style.display = "none", 1000);
         }
 
         function togglePlayPause() {
             if (music.paused) { 
                 music.play(); 
-                discBtn.classList.add("is-spinning"); 
+                discImg.classList.add("is-spinning"); 
             } else { 
                 music.pause(); 
-                discBtn.classList.remove("is-spinning"); 
+                discImg.classList.remove("is-spinning"); 
             }
         }
 
@@ -144,3 +153,10 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
