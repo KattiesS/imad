@@ -11,7 +11,6 @@
             --bg-overlay: rgba(0, 0, 0, 0.6);
         }
 
-        /* Thêm animation quay đĩa */
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -30,30 +29,18 @@
 
         .controls-row { display: flex; align-items: center; gap: 30px; margin-bottom: 15px; }
 
-        /* ĐĨA NHẠC */
-        #disc-btn {
-            width: 60px; height: 60px;
-            border-radius: 50%;
+        /* Style cho đĩa nhạc */
+        #disc-img {
+            width: 60px; height: 60px; border-radius: 50%;
             border: 3px solid rgba(255,255,255,0.2);
-            background-image: url('https://pin.it/13sHBKGvZ'); /* THAY LINK ẢNH ĐĨA CỦA BẠN TẠI ĐÂY */
-            background-size: cover;
-            cursor: pointer;
-            transition: 0.3s;
+            cursor: pointer; transition: 0.3s;
             box-shadow: 0 0 15px rgba(255,255,255,0.2);
         }
-        #disc-img {
-    transition: 0.3s;
-    box-shadow: 0 0 15px rgba(255,255,255,0.2);
-}
-.is-spinning {
-    animation: spin 4s linear infinite;
-}
-       
+        .is-spinning { animation: spin 4s linear infinite; }
         
         .skip-icon { width: 20px; height: 20px; fill: #aaa; cursor: pointer; transition: 0.3s; }
         .skip-icon:hover { fill: var(--accent-color); }
 
-        /* Thanh trượt giữ nguyên */
         input[type="range"] { -webkit-appearance: none; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; cursor: pointer; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: white; border-radius: 50%; opacity: 0; transition: 0.2s; }
         #player-wrapper:hover input[type="range"]::-webkit-slider-thumb { opacity: 1; }
@@ -79,9 +66,7 @@
         <div class="controls-row">
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
             
-            <div id="disc-container" onclick="togglePlayPause()" style="cursor: pointer; position: relative;">
-    <img id="disc-img" src="disc.png" alt="Vinyl" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.2);">
-</div>
+            <img id="disc-img" src="disc.png" onclick="togglePlayPause()" alt="Vinyl Record">
             
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
         </div>
@@ -119,7 +104,7 @@
             overlay.style.opacity = "0";
             playerWrapper.style.opacity = "1"; 
             playerWrapper.style.pointerEvents = "auto";
-            discImg.classList.add("is-spinning"); // Bắt đầu quay khi mở
+            discImg.classList.add("is-spinning");
             setTimeout(() => overlay.style.display = "none", 1000);
         }
 
@@ -133,7 +118,6 @@
             }
         }
 
-        // ... các hàm xử lý slider giữ nguyên như cũ ...
         music.addEventListener("timeupdate", () => {
             if(!music.duration) return;
             const percent = (music.currentTime / music.duration) * 100;
@@ -153,10 +137,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
