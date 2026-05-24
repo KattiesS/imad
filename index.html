@@ -36,8 +36,12 @@
             cursor: pointer; transition: 0.3s;
             box-shadow: 0 0 25px rgba(255,255,255,0.3);
             object-fit: cover;
+            animation: spin 4s linear infinite;
+    animation-play-state: paused; 
+}
         }
-        .is-spinning { animation: spin 4s linear infinite; }
+        .is-spinning {animation-play-state: running !important;
+}
         
         .skip-icon { width: 35px; height: 35px; fill: #aaa; cursor: pointer; transition: 0.3s; }
         .skip-icon:hover { fill: var(--accent-color); }
