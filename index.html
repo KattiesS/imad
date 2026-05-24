@@ -125,7 +125,7 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-right: 4px solid var(--secondary-color); /* Vạch neon màu cam ở bên phải */
+            border-right: 4px solid var(--secondary-color);
             border-radius: 8px;
             padding: 15px 25px;
             display: flex;
@@ -171,13 +171,11 @@
         <button id="play-btn" onclick="startExperience()">▶</button>
     </div>
 
-    <!-- KHUNG KÍNH MỜ THÔNG TIN BÀI HÁT (TRÁI) -->
     <div id="track-info-box">
         <p class="track-title" id="track-title">Loading...</p>
         <p class="track-artist" id="track-artist">Loading...</p>
     </div>
 
-    <!-- KHUNG KÍNH MỜ MẠNG XÃ HỘI (PHẢI) -->
     <div id="social-links-box">
         <a href="https://www.youtube.com/@KattiesS_07" target="_blank" class="social-link youtube" title="YouTube">
             <svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
@@ -191,7 +189,6 @@
         <a href="https://www.discord.com/users/600683647443533854" target="_blank" class="social-link discord" title="Discord">
             <svg viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
         </a>
-        <!-- Thêm link TikTok ở đây (Bạn nhớ thay đổi ID @KattiesS thành ID chuẩn nếu cần nhé) -->
         <a href="https://www.tiktok.com/@kattiess__?is_from_webapp=1&sender_device=pc" target="_blank" class="social-link tiktok" title="TikTok">
             <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.23-1.13 4.54-2.91 5.92-1.76 1.41-4.21 1.9-6.39 1.34-2.19-.55-3.99-2.07-4.88-4.09-.89-2.02-.75-4.5.39-6.39 1.13-1.89 3.09-3.15 5.25-3.41.4-.04.8-.04 1.19-.04v4.03c-.22.02-.45.02-.68.04-1.29.13-2.58.85-3.23 1.96-.65 1.12-.66 2.58-.08 3.73.57 1.15 1.76 1.92 3.04 2.11 1.28.18 2.66-.08 3.66-.88 1.01-.81 1.63-2.11 1.65-3.41.05-6.66.02-13.33.02-20z"/></svg>
         </a>
@@ -249,13 +246,14 @@
                 disc: "disc3.jpg"
             },
             {
-            title: " 『 Shake Na Baby 』 ",
-            artist: "AKASAKI",
-            audio: "nhac4.mp3",
-            video: "marin2.mp4",
-            disc: "disc4.jpg"
+                title: " 『 Shake Na Baby 』 ",
+                artist: "AKASAKI",
+                audio: "nhac4.mp3",
+                video: "marin2.mp4",
+                disc: "disc4.jpg",
+                videoSpeed: 1.5, // Chỉnh tốc độ video ở đây nha fen (1.0 là bình thường)
+                discSpeed: "3s"  // Chỉnh tốc độ đĩa ở đây
             }
-            
         ];
 
         let currentTrackIndex = 0; // Vị trí bài hát đang phát
@@ -274,7 +272,7 @@
         const currentTimeEl = document.getElementById("current-time");
         const totalTimeEl = document.getElementById("total-time");
         const trackInfoBox = document.getElementById("track-info-box");
-        const socialLinksBox = document.getElementById("social-links-box"); // Kết nối tới Khung MXH
+        const socialLinksBox = document.getElementById("social-links-box");
 
         // --- 3. HÀM TẢI BÀI HÁT THEO INDEX ---
         function loadTrack(index) {
@@ -284,6 +282,10 @@
             discImg.src = track.disc;
             trackTitleEl.textContent = track.title;
             trackArtistEl.textContent = track.artist;
+
+            // Xử lý tốc độ riêng cho từng bài hát (nếu có cài đặt)
+            video.playbackRate = track.videoSpeed || 1.0;
+            discImg.style.animationDuration = track.discSpeed || "4s";
         }
 
         // Tải bài hát đầu tiên ngay khi mở web
