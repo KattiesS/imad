@@ -3,18 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Sunset Player</title>
+    <title>Neon Music Player</title>
     <style>
-        /* Tông màu chủ đạo: Tím (#9d50bb) và Cam (#f9d423) */
-        :root {
-            --neon-main: #ff007f; /* Hồng neon */
-            --neon-second: #ffaa00; /* Cam vàng neon */
-            --bg-dark: #12041a;
-        }
-
         body, html {
             margin: 0; padding: 0; height: 100%; overflow: hidden;
-            background-color: var(--bg-dark); font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #050505; font-family: 'Segoe UI', Arial, sans-serif;
         }
         
         #bg-video {
@@ -24,21 +17,21 @@
 
         #overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(18, 4, 26, 0.6); display: flex;
+            background-color: rgba(0, 0, 0, 0.5); display: flex;
             justify-content: center; align-items: center; z-index: 10; transition: opacity 1s ease;
         }
 
         #play-btn {
-            background: rgba(0, 0, 0, 0.2);
-            border: 2px solid var(--neon-main);
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #00f2ff;
             border-radius: 50%; width: 80px; height: 80px;
-            color: var(--neon-main); font-size: 35px; cursor: pointer;
-            box-shadow: 0 0 20px var(--neon-main);
-            backdrop-filter: blur(5px); transition: 0.4s;
+            color: #00f2ff; font-size: 35px; cursor: pointer;
+            box-shadow: 0 0 15px #00f2ff, inset 0 0 10px #00f2ff;
+            backdrop-filter: blur(5px); transition: 0.3s;
         }
         #play-btn:hover {
-            background: var(--neon-main); color: white;
-            box-shadow: 0 0 40px var(--neon-main); transform: scale(1.1);
+            background: #00f2ff; color: black;
+            box-shadow: 0 0 30px #00f2ff; transform: scale(1.1);
         }
 
         #player-wrapper {
@@ -51,46 +44,56 @@
         .controls-row { display: flex; align-items: center; gap: 30px; margin-bottom: 20px; }
 
         .skip-icon {
-            width: 25px; height: 25px; fill: var(--neon-second); cursor: pointer;
-            filter: drop-shadow(0 0 5px var(--neon-second)); transition: 0.3s;
+            width: 25px; height: 25px; fill: #ff00ff; cursor: pointer;
+            filter: drop-shadow(0 0 5px #ff00ff); transition: 0.3s;
         }
         .skip-icon:hover { fill: #fff; filter: drop-shadow(0 0 10px #fff); }
 
         #center-play-btn {
-            width: 55px; height: 55px; background: rgba(0,0,0,0.3);
-            border: 2px solid var(--neon-main); border-radius: 50%;
+            width: 55px; height: 55px; background: rgba(0,0,0,0.5);
+            border: 2px solid #ff00ff; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            cursor: pointer; box-shadow: 0 0 15px var(--neon-main); transition: 0.3s;
+            cursor: pointer; box-shadow: 0 0 15px #ff00ff; transition: 0.3s;
         }
-        #center-play-btn:hover { background: var(--neon-main); box-shadow: 0 0 30px var(--neon-main); }
+        #center-play-btn:hover { background: #ff00ff; box-shadow: 0 0 30px #ff00ff; }
         
-        .center-icon { width: 22px; height: 22px; fill: var(--neon-main); transition: 0.3s; }
-        #center-play-btn:hover .center-icon { fill: white; }
+        .center-icon { width: 22px; height: 22px; fill: #ff00ff; transition: 0.3s; }
+        #center-play-btn:hover .center-icon { fill: black; }
 
         .bottom-bar { display: flex; align-items: center; width: 100%; gap: 20px; }
         .balance-spacer { width: 140px; }
 
+        /* Style chung cho các thanh trượt */
         input[type="range"] {
             -webkit-appearance: none; height: 6px;
             background: rgba(255, 255, 255, 0.1); border-radius: 3px;
         }
         
+        /* Thanh tiến trình có hiệu ứng Neon */
+        #progress-slider { flex-grow: 1; }
         #progress-slider::-webkit-slider-thumb {
             -webkit-appearance: none; width: 14px; height: 14px;
-            background: var(--neon-second); border-radius: 50%;
-            box-shadow: 0 0 10px var(--neon-second); opacity: 0; transition: 0.2s;
+            background: #00f2ff; border-radius: 50%;
+            box-shadow: 0 0 10px #00f2ff; opacity: 0; transition: 0.2s;
         }
         #player-wrapper:hover #progress-slider::-webkit-slider-thumb { opacity: 1; }
 
+        /* Thanh âm lượng giữ nguyên mặc định */
+        #volume-slider { width: 100px; }
+
         .speaker-icon {
-            width: 26px; height: 26px; fill: none; stroke: var(--neon-second);
-            stroke-width: 2; cursor: pointer; filter: drop-shadow(0 0 5px var(--neon-second));
+            width: 26px; height: 26px; fill: none; stroke: #00f2ff;
+            stroke-width: 2; cursor: pointer; filter: drop-shadow(0 0 5px #00f2ff);
         }
 
-        .time-text { color: #fff; text-shadow: 0 0 8px #fff; font-size: 13px; }
+        #volume-slider-container { width: 0; overflow: hidden; transition: 0.4s; display: flex; align-items: center; }
+        #volume-wrapper:hover #volume-slider-container { width: 100px; margin-left: 10px; }
+        
+        .time-text { color: #fff; text-shadow: 0 0 8px #fff; font-size: 13px; min-width: 40px; text-align: center; }
     </style>
 </head>
 <body>
+
     <video id="bg-video" src="marin1.mp4" autoplay loop muted playsinline></video>
     <audio id="bg-music" src="nhac.mp3" loop></audio>
 
@@ -139,23 +142,17 @@
             setTimeout(() => overlay.style.display = "none", 1000);
         }
 
-        // Cập nhật màu thanh trượt theo biến CSS
-        function updateSliderColor(el, val) {
-            const color = el.id === 'progress-slider' ? '#ffaa00' : '#ff007f';
-            el.style.background = `linear-gradient(to right, ${color} ${val}%, rgba(255,255,255,0.1) ${val}%)`;
-        }
-
-        volumeSlider.addEventListener("input", function() {
-            music.volume = this.value;
-            updateSliderColor(this, this.value * 100);
-        });
-
+        // Chỉ cập nhật màu cho thanh tiến trình
         music.addEventListener("timeupdate", () => {
             if(!music.duration) return;
             const percent = (music.currentTime / music.duration) * 100;
             progressSlider.value = percent;
             currentTimeEl.textContent = formatTime(music.currentTime);
-            updateSliderColor(progressSlider, percent);
+            progressSlider.style.background = `linear-gradient(to right, #00f2ff ${percent}%, rgba(255,255,255,0.1) ${percent}%)`;
+        });
+
+        volumeSlider.addEventListener("input", function() {
+            music.volume = this.value;
         });
 
         progressSlider.addEventListener("input", function() {
