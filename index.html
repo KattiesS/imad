@@ -4,11 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <style>
+        /* Sửa CSS cho toàn màn hình */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* Ngăn chặn thanh cuộn */
+            background-color: black; /* Thêm nền đen để trông đẹp hơn */
+        }
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Phóng to để lấp đầy toàn bộ màn hình, giữ nguyên tỷ lệ khung hình */
+            /* Điều này có thể làm cắt một chút ảnh ở hai bên hoặc trên dưới nếu tỷ lệ khung hình của trình duyệt khác với ảnh */
+        }
+    </style>
 </head>
-<body style="text-align: center; margin-top: 50px;">
+<body>
 
     <!-- Thay 'anh-dong.gif' bằng đúng tên file GIF mà bạn đã tải lên -->
-    <img src="marin.gif" alt="Ảnh GIF của tôi" width="500">
+    <img src="marin.gif" alt="Ảnh GIF của tôi">
 
 </body>
 </html>
