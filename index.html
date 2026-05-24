@@ -3,93 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang web của tôi</title>
+    <title>Neon Music Player</title>
     <style>
-    body, html {
-        margin: 0; padding: 0; height: 100%; overflow: hidden;
-        background-color: #050505; font-family: 'Segoe UI', Arial, sans-serif;
-    }
-    
-    #bg-video {
-        width: 100%; height: 100%; object-fit: cover;
-        transform: scale(1.1); filter: blur(25px); transition: filter 1.5s ease; 
-    }
+        body, html {
+            margin: 0; padding: 0; height: 100%; overflow: hidden;
+            background-color: #050505; font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        #bg-video {
+            width: 100%; height: 100%; object-fit: cover;
+            transform: scale(1.1); filter: blur(25px); transition: filter 1.5s ease; 
+        }
 
-    /* Lớp phủ màn hình */
-    #overlay {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); display: flex;
-        justify-content: center; align-items: center; z-index: 10; transition: opacity 1s ease;
-    }
+        /* Lớp phủ màn hình */
+        #overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); display: flex;
+            justify-content: center; align-items: center; z-index: 10; transition: opacity 1s ease;
+        }
 
-    /* Nút Play đầu tiên với hiệu ứng Neon */
-    #play-btn {
-        background: rgba(0, 0, 0, 0.3);
-        border: 2px solid #00f2ff;
-        border-radius: 50%; width: 80px; height: 80px;
-        color: #00f2ff; font-size: 35px; cursor: pointer;
-        box-shadow: 0 0 15px #00f2ff, inset 0 0 10px #00f2ff;
-        backdrop-filter: blur(5px); transition: 0.3s;
-    }
-    #play-btn:hover {
-        background: #00f2ff; color: black;
-        box-shadow: 0 0 30px #00f2ff; transform: scale(1.1);
-    }
+        #play-btn {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #00f2ff;
+            border-radius: 50%; width: 80px; height: 80px;
+            color: #00f2ff; font-size: 35px; cursor: pointer;
+            box-shadow: 0 0 15px #00f2ff, inset 0 0 10px #00f2ff;
+            backdrop-filter: blur(5px); transition: 0.3s;
+        }
+        #play-btn:hover {
+            background: #00f2ff; color: black;
+            box-shadow: 0 0 30px #00f2ff; transform: scale(1.1);
+        }
 
-    /* Cụm Player */
-    #player-wrapper {
-        position: absolute; bottom: 40px; left: 50%;
-        transform: translateX(-50%); display: flex; flex-direction: column;
-        align-items: center; width: 750px; max-width: 95%; z-index: 5;
-        opacity: 0; pointer-events: none; transition: opacity 1.5s ease;
-    }
+        /* Cụm Player */
+        #player-wrapper {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%); display: flex; flex-direction: column;
+            align-items: center; width: 750px; max-width: 95%; z-index: 5;
+            opacity: 0; pointer-events: none; transition: opacity 1.5s ease;
+        }
 
-    .controls-row { display: flex; align-items: center; gap: 30px; margin-bottom: 20px; }
+        .controls-row { display: flex; align-items: center; gap: 30px; margin-bottom: 20px; }
 
-    .skip-icon {
-        width: 25px; height: 25px; fill: #ff00ff; cursor: pointer;
-        filter: drop-shadow(0 0 5px #ff00ff); transition: 0.3s;
-    }
-    .skip-icon:hover { fill: #fff; filter: drop-shadow(0 0 10px #fff); }
+        .skip-icon {
+            width: 25px; height: 25px; fill: #ff00ff; cursor: pointer;
+            filter: drop-shadow(0 0 5px #ff00ff); transition: 0.3s;
+        }
+        .skip-icon:hover { fill: #fff; filter: drop-shadow(0 0 10px #fff); }
 
-    #center-play-btn {
-        width: 55px; height: 55px; background: rgba(0,0,0,0.5);
-        border: 2px solid #ff00ff; border-radius: 50%;
-        display: flex; justify-content: center; align-items: center;
-        cursor: pointer; box-shadow: 0 0 15px #ff00ff; transition: 0.3s;
-    }
-    #center-play-btn:hover { background: #ff00ff; box-shadow: 0 0 30px #ff00ff; }
-    
-    .center-icon { width: 22px; height: 22px; fill: #ff00ff; transition: 0.3s; }
-    #center-play-btn:hover .center-icon { fill: black; }
+        #center-play-btn {
+            width: 55px; height: 55px; background: rgba(0,0,0,0.5);
+            border: 2px solid #ff00ff; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; box-shadow: 0 0 15px #ff00ff; transition: 0.3s;
+        }
+        #center-play-btn:hover { background: #ff00ff; box-shadow: 0 0 30px #ff00ff; }
+        
+        .center-icon { width: 22px; height: 22px; fill: #ff00ff; transition: 0.3s; }
+        #center-play-btn:hover .center-icon { fill: black; }
 
-    /* Thanh Tua & Loa Neon */
-    .bottom-bar { display: flex; align-items: center; width: 100%; gap: 20px; }
-    .balance-spacer { width: 140px; }
+        /* Bottom Bar */
+        .bottom-bar { display: flex; align-items: center; width: 100%; gap: 20px; }
+        .balance-spacer { width: 140px; }
 
-    input[type="range"] {
-        -webkit-appearance: none; height: 6px;
-        background: rgba(255, 255, 255, 0.1); border-radius: 3px;
-        box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
-    }
-    
-    /* Màu Neon cho thanh tiến trình */
-    #progress-slider { flex-grow: 1; }
-    #progress-slider::-webkit-slider-thumb {
-        -webkit-appearance: none; width: 14px; height: 14px;
-        background: #00f2ff; border-radius: 50%;
-        box-shadow: 0 0 10px #00f2ff; opacity: 0; transition: 0.2s;
-    }
-    #player-wrapper:hover #progress-slider::-webkit-slider-thumb { opacity: 1; }
+        input[type="range"] {
+            -webkit-appearance: none; height: 6px;
+            background: rgba(255, 255, 255, 0.1); border-radius: 3px;
+        }
+        
+        #progress-slider { flex-grow: 1; }
+        #progress-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 14px; height: 14px;
+            background: #00f2ff; border-radius: 50%;
+            box-shadow: 0 0 10px #00f2ff; opacity: 0; transition: 0.2s;
+        }
+        #player-wrapper:hover #progress-slider::-webkit-slider-thumb { opacity: 1; }
 
-    .speaker-icon {
-        width: 26px; height: 26px; fill: none; stroke: #00f2ff;
-        stroke-width: 2; cursor: pointer; filter: drop-shadow(0 0 5px #00f2ff);
-    }
+        .speaker-icon {
+            width: 26px; height: 26px; fill: none; stroke: #00f2ff;
+            stroke-width: 2; cursor: pointer; filter: drop-shadow(0 0 5px #00f2ff);
+        }
 
-    #volume-slider { width: 100px; }
-    
-    .time-text { color: #fff; text-shadow: 0 0 8px #fff; font-size: 13px; }
+        #volume-slider-container { width: 0; overflow: hidden; transition: 0.4s; display: flex; align-items: center; }
+        #volume-wrapper:hover #volume-slider-container { width: 100px; margin-left: 10px; }
+        
+        .time-text { color: #fff; text-shadow: 0 0 8px #fff; font-size: 13px; min-width: 40px; text-align: center; }
     </style>
 </head>
 <body>
@@ -102,119 +100,78 @@
     </div>
 
     <div id="player-wrapper">
-        
         <div class="controls-row">
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-            
             <div id="center-play-btn" onclick="togglePlayPause()">
-                <svg id="play-pause-icon" class="center-icon" viewBox="0 0 24 24">
-                    <path id="icon-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-                </svg>
+                <svg class="center-icon" viewBox="0 0 24 24"><path id="icon-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
             </div>
-            
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
         </div>
         
         <div class="bottom-bar">
             <div class="balance-spacer"></div>
-            
-            <div class="progress-row">
+            <div class="progress-row" style="flex-grow:1; display:flex; align-items:center; gap:15px;">
                 <span id="current-time" class="time-text">0:00</span>
                 <input type="range" id="progress-slider" min="0" max="100" value="0">
                 <span id="total-time" class="time-text">0:00</span>
             </div>
-            
-            <div id="volume-wrapper">
-                <svg class="speaker-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                </svg>
-                <div id="volume-slider-container">
-                    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
-                </div>
+            <div id="volume-wrapper" style="display:flex; align-items:center; width:140px;">
+                <svg class="speaker-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                <div id="volume-slider-container"><input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1"></div>
             </div>
         </div>
     </div>
 
     <script>
-        var music = document.getElementById("bg-music");
-        var video = document.getElementById("bg-video");
-        var overlay = document.getElementById("overlay");
-        
-        var playerWrapper = document.getElementById("player-wrapper");
-        var volumeSlider = document.getElementById("volume-slider");
-        
-        var progressSlider = document.getElementById("progress-slider");
-        var currentTimeEl = document.getElementById("current-time");
-        var totalTimeEl = document.getElementById("total-time");
-        var iconPath = document.getElementById("icon-path");
+        const music = document.getElementById("bg-music");
+        const video = document.getElementById("bg-video");
+        const overlay = document.getElementById("overlay");
+        const playerWrapper = document.getElementById("player-wrapper");
+        const progressSlider = document.getElementById("progress-slider");
+        const volumeSlider = document.getElementById("volume-slider");
+        const iconPath = document.getElementById("icon-path");
+        const currentTimeEl = document.getElementById("current-time");
+        const totalTimeEl = document.getElementById("total-time");
 
-        // Set màu thanh âm lượng ban đầu (100%)
-        volumeSlider.style.background = `linear-gradient(to right, white 100%, rgba(255, 255, 255, 0.3) 100%)`;
-
-        // ==========================================
-        // 1. HÀM MỞ MÀN KHỞI CHẠY WEB
-        // ==========================================
         function startExperience() {
-            music.play();
-            video.style.filter = "blur(0px)";
+            music.play(); video.style.filter = "blur(0px)";
             overlay.style.opacity = "0";
-            
-            // Chỉ cần gọi hiện toàn bộ cụm nhạc (cả loa và timeline đi kèm luôn)
-            playerWrapper.style.opacity = "1";
-            playerWrapper.style.pointerEvents = "auto";
-            
-            setTimeout(function() { overlay.style.display = "none"; }, 1000);
+            playerWrapper.style.opacity = "1"; playerWrapper.style.pointerEvents = "auto";
+            setTimeout(() => overlay.style.display = "none", 1000);
         }
 
-        // ==========================================
-        // 2. HÀM XỬ LÝ ÂM LƯỢNG
-        // ==========================================
+        function updateSliderColor(el, val) {
+            el.style.background = `linear-gradient(to right, #00f2ff ${val}%, rgba(255,255,255,0.1) ${val}%)`;
+        }
+
         volumeSlider.addEventListener("input", function() {
             music.volume = this.value;
-            var percentage = this.value * 100;
-            this.style.background = `linear-gradient(to right, white ${percentage}%, rgba(255, 255, 255, 0.3) ${percentage}%)`;
+            updateSliderColor(this, this.value * 100);
         });
 
-        // ==========================================
-        // 3. HÀM XỬ LÝ THANH PHÁT NHẠC (TIMELINE)
-        // ==========================================
-        function formatTime(seconds) {
-            if (isNaN(seconds)) return "0:00";
-            var m = Math.floor(seconds / 60);
-            var s = Math.floor(seconds % 60);
-            return m + ":" + (s < 10 ? "0" + s : s);
-        }
-
-        music.addEventListener("loadedmetadata", function() {
-            totalTimeEl.textContent = formatTime(music.duration);
-        });
-
-        music.addEventListener("timeupdate", function() {
-            if(music.duration) {
-                var currentPercent = (music.currentTime / music.duration) * 100;
-                progressSlider.value = currentPercent;
-                currentTimeEl.textContent = formatTime(music.currentTime);
-                progressSlider.style.background = `linear-gradient(to right, white ${currentPercent}%, rgba(255, 255, 255, 0.3) ${currentPercent}%)`;
-            }
+        music.addEventListener("timeupdate", () => {
+            if(!music.duration) return;
+            const percent = (music.currentTime / music.duration) * 100;
+            progressSlider.value = percent;
+            currentTimeEl.textContent = formatTime(music.currentTime);
+            updateSliderColor(progressSlider, percent);
         });
 
         progressSlider.addEventListener("input", function() {
-            var seekTime = (this.value / 100) * music.duration;
-            music.currentTime = seekTime;
-            this.style.background = `linear-gradient(to right, white ${this.value}%, rgba(255, 255, 255, 0.3) ${this.value}%)`;
+            music.currentTime = (this.value / 100) * music.duration;
         });
 
+        function formatTime(s) {
+            let m = Math.floor(s/60); let sec = Math.floor(s%60);
+            return `${m}:${sec < 10 ? '0'+sec : sec}`;
+        }
+
+        music.addEventListener("loadedmetadata", () => totalTimeEl.textContent = formatTime(music.duration));
+
         function togglePlayPause() {
-            if (music.paused) {
-                music.play();
-                iconPath.setAttribute("d", "M6 19h4V5H6v14zm8-14v14h4V5h-4z"); 
-            } else {
-                music.pause();
-                iconPath.setAttribute("d", "M8 5v14l11-7z");
-            }
+            if (music.paused) { music.play(); iconPath.setAttribute("d", "M6 19h4V5H6v14zm8-14v14h4V5h-4z"); }
+            else { music.pause(); iconPath.setAttribute("d", "M8 5v14l11-7z"); }
         }
     </script>
-
 </body>
 </html>
