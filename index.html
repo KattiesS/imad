@@ -77,6 +77,46 @@
         #volume-slider-container { width: 0; overflow: hidden; transition: 0.4s; }
         #volume-wrapper:hover #volume-slider-container { width: 100px; margin-left: 10px; }
         #volume-slider { width: 100px; }
+
+        /* KHUNG KÍNH MỜ GÓC TRÁI DƯỚI */
+        #track-info-box {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--accent-color); /* Tạo một vạch nhấn neon ở cạnh trái */
+            border-radius: 8px;
+            padding: 15px 25px;
+            min-width: 200px;
+            max-width: 300px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease, transform 1.5s ease;
+            transform: translateY(10px); /* Nhấc nhẹ khi xuất hiện */
+        }
+        .track-title {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            letter-spacing: 0.5px;
+        }
+        .track-artist {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body>
@@ -88,11 +128,16 @@
         <button id="play-btn" onclick="startExperience()">▶</button>
     </div>
 
+    <!-- KHUNG KÍNH MỜ THÔNG TIN BÀI HÁT -->
+    <div id="track-info-box">
+        <p class="track-title">Tên Bài Hát Ở Đây</p>
+        <p class="track-artist">Tên Ca Sĩ / Artist</p>
+    </div>
+
     <div id="player-wrapper">
         <div class="controls-row">
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
             
-            <!-- Đã bọc đĩa nhạc vào div .disc-container -->
             <div class="disc-container">
                 <img id="disc-img" src="disc.jpg" onclick="togglePlayPause()" alt="Vinyl Record">
             </div>
@@ -126,6 +171,7 @@
         const volumeSlider = document.getElementById("volume-slider");
         const currentTimeEl = document.getElementById("current-time");
         const totalTimeEl = document.getElementById("total-time");
+        const trackInfoBox = document.getElementById("track-info-box");
 
         function startExperience() {
             music.play();
@@ -133,6 +179,12 @@
             overlay.style.opacity = "0";
             playerWrapper.style.opacity = "1"; 
             playerWrapper.style.pointerEvents = "auto";
+            
+            // Hiện khung thông tin bài hát đồng bộ mượt mà
+            trackInfoBox.style.opacity = "1";
+            trackInfoBox.style.pointerEvents = "auto";
+            trackInfoBox.style.transform = "translateY(0)";
+
             discImg.classList.add("is-spinning");
             setTimeout(() => overlay.style.display = "none", 1000);
         }
