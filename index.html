@@ -29,7 +29,7 @@
 
         .controls-row { display: flex; align-items: center; gap: 50px; margin-bottom: 30px; }
 
-        /* Đĩa nhạc đã to hơn */
+        /* Đĩa nhạc lớn và hiệu ứng đứng yên */
         #disc-img {
             width: 180px; height: 180px; border-radius: 50%;
             border: 5px solid rgba(255,255,255,0.2);
@@ -37,11 +37,11 @@
             box-shadow: 0 0 25px rgba(255,255,255,0.3);
             object-fit: cover;
             animation: spin 4s linear infinite;
-    animation-play-state: paused; 
-}
+            animation-play-state: paused; /* Mặc định đứng yên */
         }
-        .is-spinning {animation-play-state: running !important;
-}
+        .is-spinning {
+            animation-play-state: running !important; /* Khi phát thì quay tiếp */
+        }
         
         .skip-icon { width: 35px; height: 35px; fill: #aaa; cursor: pointer; transition: 0.3s; }
         .skip-icon:hover { fill: var(--accent-color); }
