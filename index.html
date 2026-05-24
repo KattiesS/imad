@@ -31,7 +31,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Nền đen mờ đằng sau nút Play */
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -62,46 +62,78 @@
             transform: scale(1.1);
         }
 
-        /* ----- CSS MỚI: THANH ÂM LƯỢNG DỌC & KÍNH MỜ ----- */
-        #volume-container {
+        /* ----- CSS MỚI: CỤM ÂM LƯỢNG BÊN TRÁI ----- */
+        #volume-wrapper {
             position: absolute;
-            top: 50%; /* Đẩy xuống giữa màn hình */
-            right: 40px; /* Cách mép phải 40px */
-            transform: translateY(-50%); /* Cân bằng chuẩn xác ở giữa */
-            
+            top: 50%; 
+            left: 40px; /* Đổi sang mép trái */
+            transform: translateY(-50%);
             display: flex;
-            flex-direction: column; /* Đổi thành xếp dọc (icon nằm trên thanh kéo) */
+            flex-direction: column;
             align-items: center;
             gap: 15px;
-            
-            /* Hiệu ứng kính mờ (Glassmorphism) */
-            background-color: rgba(255, 255, 255, 0.05); /* Nền cực kỳ trong suốt */
-            border: 1px solid rgba(255, 255, 255, 0.15); /* Viền trắng siêu mỏng */
-            padding: 20px 10px;
-            border-radius: 40px; /* Bo góc dài dạng viên thuốc */
-            backdrop-filter: blur(12px); /* Làm mờ cảnh video phía sau thanh loa */
             z-index: 5;
             
-            /* Ban đầu ẩn đi */
+            /* Ban đầu ẩn đi trước khi bấm Play */
             opacity: 0; 
             pointer-events: none;
             transition: opacity 1.5s ease;
         }
 
+        /* Nút Icon Loa (Kính mờ) */
         #volume-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 22px;
-            color: rgba(255, 255, 255, 0.6); /* Icon màu trắng trong suốt */
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
             user-select: none;
-            margin-bottom: 5px;
+            
+            /* Hiệu ứng kính mờ cho Icon */
+            background-color: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+
+        #volume-icon:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* Khung chứa thanh kéo âm lượng */
+        #volume-slider-container {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 15px 10px;
+            border-radius: 30px;
+            backdrop-filter: blur(12px);
+            
+            /* Ban đầu ẩn thanh kéo */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-15px); /* Trượt nhẹ lên trên khi ẩn */
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* Hiệu ứng mượt */
+        }
+
+        /* Class được thêm vào khi click để hiện thanh kéo */
+        #volume-slider-container.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
         }
 
         #volume-slider {
-            -webkit-appearance: slider-vertical; /* Ép thanh trượt hiển thị dọc trên Chrome/Edge/Safari */
+            -webkit-appearance: slider-vertical;
             appearance: slider-vertical; 
-            width: 6px; /* Làm thanh trượt thon gọn lại */
-            height: 120px; /* Chiều dài của thanh kéo */
+            width: 6px; 
+            height: 100px; 
             cursor: pointer;
-            accent-color: rgba(255, 255, 255, 0.8); /* Màu vạch kéo cũng trong suốt nhẹ */
+            accent-color: rgba(255, 255, 255, 0.8); 
         }
     </style>
 </head>
@@ -119,10 +151,14 @@
     </div>
 
     <!-- ----- GIAO DIỆN THANH ÂM LƯỢNG ----- -->
-    <div id="volume-container">
-        <span id="volume-icon">🔊</span>
-        <!-- Thêm thuộc tính orient="vertical" để hỗ trợ tốt hơn cho Firefox -->
-        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1" orient="vertical">
+    <div id="volume-wrapper">
+        <!-- Nút loa kính mờ -->
+        <div id="volume-icon" onclick="toggleVolumeSlider()">🔊</div>
+        
+        <!-- Hộp chứa thanh kéo (Bị ẩn, hiện ra khi click nút loa) -->
+        <div id="volume-slider-container">
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1" orient="vertical">
+        </div>
     </div>
 
     <!-- Script xử lý hiệu ứng -->
@@ -131,7 +167,8 @@
         var video = document.getElementById("bg-video");
         var overlay = document.getElementById("overlay");
         
-        var volumeContainer = document.getElementById("volume-container");
+        var volumeWrapper = document.getElementById("volume-wrapper");
+        var volumeSliderContainer = document.getElementById("volume-slider-container");
         var volumeSlider = document.getElementById("volume-slider");
         var volumeIcon = document.getElementById("volume-icon");
 
@@ -140,13 +177,18 @@
             video.style.filter = "blur(0px)";
             overlay.style.opacity = "0";
 
-            // Hiện thanh âm lượng lên
-            volumeContainer.style.opacity = "1";
-            volumeContainer.style.pointerEvents = "auto";
+            // Hiện cụm âm lượng lên (nhưng thanh kéo vẫn ẩn chờ click)
+            volumeWrapper.style.opacity = "1";
+            volumeWrapper.style.pointerEvents = "auto";
             
             setTimeout(function() {
                 overlay.style.display = "none";
             }, 1000);
+        }
+
+        // Lệnh để Bật/Tắt (Hiện/Ẩn) thanh trượt khi bấm vào Icon Loa
+        function toggleVolumeSlider() {
+            volumeSliderContainer.classList.toggle("active");
         }
 
         // Lệnh xử lý khi kéo thanh âm lượng
