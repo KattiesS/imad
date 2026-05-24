@@ -64,28 +64,25 @@
         }
 
         /* =========================================
-           CSS MỚI: THANH ÂM LƯỢNG TRƯỢT NGANG GIỐNG ẢNH
+           CỤM ÂM LƯỢNG (Bên trái)
            ========================================= */
         #volume-wrapper {
             position: absolute;
-            bottom: 40px; /* Đặt ở góc dưới */
-            left: 40px;   /* Bên trái màn hình */
+            bottom: 40px; 
+            left: 40px;   
             display: flex;
             align-items: center;
             z-index: 5;
-            
-            /* Ban đầu ẩn đi chờ bấm nút Play */
             opacity: 0; 
             pointer-events: none;
             transition: opacity 1.5s ease;
         }
 
-        /* Icon Loa vẽ bằng SVG cho nét thanh mảnh giống ảnh */
         .speaker-icon {
             width: 24px;
             height: 24px;
             fill: none;
-            stroke: #cccccc; /* Màu xám sáng */
+            stroke: #cccccc; 
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
@@ -94,54 +91,139 @@
         }
 
         #volume-wrapper:hover .speaker-icon {
-            stroke: #ffffff; /* Trắng sáng lên khi rê chuột vào */
+            stroke: #ffffff; 
         }
 
-        /* Hộp chứa thanh kéo (Ban đầu độ rộng = 0 để giấu đi) */
         #volume-slider-container {
             width: 0;
             overflow: hidden;
             margin-left: 0;
-            /* Hiệu ứng trượt ra trượt vào mượt mà */
             transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), margin-left 0.4s ease;
             display: flex;
             align-items: center;
         }
 
-        /* Lệnh mở rộng thanh kéo khi tương tác (rê chuột vào nguyên cụm) */
         #volume-wrapper:hover #volume-slider-container {
-            width: 100px; /* Độ dài thanh kéo khi trượt ra */
-            margin-left: 15px; /* Cách icon loa một đoạn */
+            width: 100px; 
+            margin-left: 15px; 
         }
 
-        /* Thiết kế lại hoàn toàn ngoại hình của thanh kéo (Khớp với ảnh) */
+        /* Dùng chung CSS cho các thanh kéo */
         input[type="range"] {
-            -webkit-appearance: none; /* Xóa style mặc định */
-            width: 100px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.3); /* Nền xám mờ */
-            border-radius: 3px;
+            -webkit-appearance: none;
+            height: 4px; /* Thanh mỏng và tinh tế hơn */
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
             outline: none;
             cursor: pointer;
         }
 
-        /* Giấu cục tròn (thumb) đi để trông phẳng y hệt ảnh */
+        #volume-slider { width: 100px; }
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 0;
-            height: 0;
+            width: 0; height: 0;
         }
         input[type="range"]::-moz-range-thumb {
-            width: 0;
-            height: 0;
-            border: none;
+            width: 0; height: 0; border: none;
+        }
+
+        /* =========================================
+           CỤM PHÁT NHẠC MỚI (Ở giữa)
+           ========================================= */
+        #player-wrapper {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 450px;
+            max-width: 90%;
+            z-index: 5;
+            opacity: 0; 
+            pointer-events: none;
+            transition: opacity 1.5s ease;
+        }
+
+        /* Hàng chứa các nút bấm (Prev - Play - Next) */
+        .controls-row {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 15px;
+        }
+
+        /* Nút Prev / Next */
+        .skip-icon {
+            width: 20px;
+            height: 20px;
+            fill: #999;
+            cursor: pointer;
+            transition: fill 0.3s;
+        }
+        .skip-icon:hover { fill: #fff; }
+
+        /* Nút Play/Pause (Hình tròn trắng) */
+        #center-play-btn {
+            width: 45px;
+            height: 45px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #center-play-btn:hover { transform: scale(1.1); }
+        
+        .center-icon {
+            width: 20px;
+            height: 20px;
+            fill: black;
+        }
+
+        /* Hàng chứa thanh thời gian */
+        .progress-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 15px;
+        }
+
+        .time-text {
+            color: #d1d1d1;
+            font-size: 13px;
+            min-width: 35px;
+            text-align: center;
+            user-select: none;
+        }
+
+        #progress-slider {
+            flex-grow: 1; /* Tự động kéo dài chiếm hết không gian trống */
+            height: 4px;
+        }
+        
+        /* Hiệu ứng rê chuột vào thanh tiến trình thì hiện cục tròn nhỏ (như Youtube) */
+        #progress-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        #player-wrapper:hover #progress-slider::-webkit-slider-thumb {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
 
     <video id="bg-video" src="marin1.mp4" autoplay loop muted playsinline></video>
-
     <audio id="bg-music" src="nhac.mp3" loop></audio>
 
     <div id="overlay">
@@ -153,9 +235,28 @@
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
             <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
         </svg>
-        
         <div id="volume-slider-container">
             <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+        </div>
+    </div>
+
+    <div id="player-wrapper">
+        <div class="controls-row">
+            <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            
+            <div id="center-play-btn" onclick="togglePlayPause()">
+                <svg id="play-pause-icon" class="center-icon" viewBox="0 0 24 24">
+                    <path id="icon-path" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                </svg>
+            </div>
+            
+            <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+        </div>
+        
+        <div class="progress-row">
+            <span id="current-time" class="time-text">0:00</span>
+            <input type="range" id="progress-slider" min="0" max="100" value="0">
+            <span id="total-time" class="time-text">0:00</span>
         </div>
     </div>
 
@@ -166,40 +267,90 @@
         
         var volumeWrapper = document.getElementById("volume-wrapper");
         var volumeSlider = document.getElementById("volume-slider");
+        
+        var playerWrapper = document.getElementById("player-wrapper");
+        var progressSlider = document.getElementById("progress-slider");
+        var currentTimeEl = document.getElementById("current-time");
+        var totalTimeEl = document.getElementById("total-time");
+        var iconPath = document.getElementById("icon-path");
 
-        // Khởi tạo màu trắng lấp đầy 100% thanh kéo ngay từ đầu
+        // Set màu thanh âm lượng ban đầu
         volumeSlider.style.background = `linear-gradient(to right, white 100%, rgba(255, 255, 255, 0.3) 100%)`;
 
+        // ==========================================
+        // 1. HÀM MỞ MÀN KHỞI CHẠY WEB
+        // ==========================================
         function startExperience() {
-            // 1. Phát nhạc
             music.play();
-            
-            // 2. Xóa độ mờ của video (từ 25px về 0px)
             video.style.filter = "blur(0px)";
-            
-            // 3. Làm mờ lớp phủ màu đen đi
             overlay.style.opacity = "0";
             
-            // 4. Cho cụm loa hiện lên màn hình (nhưng thanh kéo vẫn ẩn gọn bên trong)
             volumeWrapper.style.opacity = "1";
             volumeWrapper.style.pointerEvents = "auto";
             
-            // 5. Xóa hẳn lớp phủ sau khi hiệu ứng tan biến hoàn tất
-            setTimeout(function() {
-                overlay.style.display = "none";
-            }, 1000);
+            // Hiện bảng điều khiển nhạc
+            playerWrapper.style.opacity = "1";
+            playerWrapper.style.pointerEvents = "auto";
+            
+            setTimeout(function() { overlay.style.display = "none"; }, 1000);
         }
 
-        // Lệnh đổi phần trăm trắng/xám theo thời gian thực khi kéo thanh âm thanh
+        // ==========================================
+        // 2. HÀM XỬ LÝ ÂM LƯỢNG
+        // ==========================================
         volumeSlider.addEventListener("input", function() {
-            music.volume = this.value; // Chỉnh âm lượng thực tế
-            
-            // Tính toán phần trăm (từ 0 đến 1 -> 0% đến 100%)
+            music.volume = this.value;
             var percentage = this.value * 100;
-            
-            // Cập nhật lại màu nền: Trắng cho phần đã kéo, Xám mờ cho phần chưa kéo
             this.style.background = `linear-gradient(to right, white ${percentage}%, rgba(255, 255, 255, 0.3) ${percentage}%)`;
         });
+
+        // ==========================================
+        // 3. HÀM XỬ LÝ THANH PHÁT NHẠC
+        // ==========================================
+        
+        // Đổi giây thành định dạng Phút:Giây (VD: 2:59)
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            var m = Math.floor(seconds / 60);
+            var s = Math.floor(seconds % 60);
+            return m + ":" + (s < 10 ? "0" + s : s);
+        }
+
+        // Khi load được thông tin bài hát (độ dài)
+        music.addEventListener("loadedmetadata", function() {
+            totalTimeEl.textContent = formatTime(music.duration);
+        });
+
+        // Cập nhật thanh chạy liên tục khi nhạc đang phát
+        music.addEventListener("timeupdate", function() {
+            if(music.duration) {
+                var currentPercent = (music.currentTime / music.duration) * 100;
+                progressSlider.value = currentPercent;
+                currentTimeEl.textContent = formatTime(music.currentTime);
+                // Tô màu trắng cho phần đã phát
+                progressSlider.style.background = `linear-gradient(to right, white ${currentPercent}%, rgba(255, 255, 255, 0.3) ${currentPercent}%)`;
+            }
+        });
+
+        // Tua bài hát khi kéo thanh
+        progressSlider.addEventListener("input", function() {
+            var seekTime = (this.value / 100) * music.duration;
+            music.currentTime = seekTime;
+            this.style.background = `linear-gradient(to right, white ${this.value}%, rgba(255, 255, 255, 0.3) ${this.value}%)`;
+        });
+
+        // Tạm dừng / Phát tiếp khi bấm nút giữa
+        function togglePlayPause() {
+            if (music.paused) {
+                music.play();
+                // Đổi thành icon Pause (2 sọc)
+                iconPath.setAttribute("d", "M6 19h4V5H6v14zm8-14v14h4V5h-4z"); 
+            } else {
+                music.pause();
+                // Đổi thành icon Play (Tam giác)
+                iconPath.setAttribute("d", "M8 5v14l11-7z");
+            }
+        }
     </script>
 
 </body>
