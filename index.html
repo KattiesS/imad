@@ -64,72 +64,7 @@
         }
 
         /* =========================================
-           CỤM ÂM LƯỢNG (Bên trái)
-           ========================================= */
-        #volume-wrapper {
-            position: absolute;
-            bottom: 40px; 
-            left: 40px;   
-            display: flex;
-            align-items: center;
-            z-index: 5;
-            opacity: 0; 
-            pointer-events: none;
-            transition: opacity 1.5s ease;
-        }
-
-        .speaker-icon {
-            width: 24px;
-            height: 24px;
-            fill: none;
-            stroke: #cccccc; 
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            cursor: pointer;
-            transition: stroke 0.3s ease;
-        }
-
-        #volume-wrapper:hover .speaker-icon {
-            stroke: #ffffff; 
-        }
-
-        #volume-slider-container {
-            width: 0;
-            overflow: hidden;
-            margin-left: 0;
-            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), margin-left 0.4s ease;
-            display: flex;
-            align-items: center;
-        }
-
-        #volume-wrapper:hover #volume-slider-container {
-            width: 100px; 
-            margin-left: 15px; 
-        }
-
-        /* Dùng chung CSS cho các thanh kéo */
-        input[type="range"] {
-            -webkit-appearance: none;
-            height: 4px; /* Thanh mỏng và tinh tế hơn */
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 2px;
-            outline: none;
-            cursor: pointer;
-        }
-
-        #volume-slider { width: 100px; }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 0; height: 0;
-        }
-        input[type="range"]::-moz-range-thumb {
-            width: 0; height: 0; border: none;
-        }
-
-        /* =========================================
-           CỤM PHÁT NHẠC MỚI (Ở giữa)
+           CỤM GIAO DIỆN PHÁT NHẠC TỔNG THỂ
            ========================================= */
         #player-wrapper {
             position: absolute;
@@ -139,8 +74,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 450px;
-            max-width: 90%;
+            width: 750px; /* Đủ rộng cho cả Timeline và Loa */
+            max-width: 95%;
             z-index: 5;
             opacity: 0; 
             pointer-events: none;
@@ -155,7 +90,6 @@
             margin-bottom: 15px;
         }
 
-        /* Nút Prev / Next */
         .skip-icon {
             width: 20px;
             height: 20px;
@@ -165,7 +99,6 @@
         }
         .skip-icon:hover { fill: #fff; }
 
-        /* Nút Play/Pause (Hình tròn trắng) */
         #center-play-btn {
             width: 45px;
             height: 45px;
@@ -185,12 +118,27 @@
             fill: black;
         }
 
-        /* Hàng chứa thanh thời gian */
-        .progress-row {
+        /* =========================================
+           HÀNG CHỨA TIMELINE + LOA (Bố cục 3 phần cân bằng)
+           ========================================= */
+        .bottom-bar {
             display: flex;
             align-items: center;
             width: 100%;
+        }
+
+        /* 1. Cục Spacer tàng hình bên trái (Giúp tạo lực đẩy cân bằng hoàn hảo với cục Loa bên phải) */
+        .balance-spacer {
+            width: 140px; 
+        }
+
+        /* 2. Cụm thanh tua nhạc nằm chính giữa */
+        .progress-row {
+            flex-grow: 1; /* Tự động kéo dài chiếm không gian trống ở giữa */
+            display: flex;
+            align-items: center;
             gap: 15px;
+            padding: 0 15px;
         }
 
         .time-text {
@@ -201,24 +149,68 @@
             user-select: none;
         }
 
-        #progress-slider {
-            flex-grow: 1; /* Tự động kéo dài chiếm hết không gian trống */
-            height: 4px;
-        }
-        
-        /* Hiệu ứng rê chuột vào thanh tiến trình thì hiện cục tròn nhỏ (như Youtube) */
-        #progress-slider::-webkit-slider-thumb {
+        /* Dùng chung CSS cho thanh kéo (Tua nhạc & Âm lượng) */
+        input[type="range"] {
             -webkit-appearance: none;
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.2s;
+            height: 4px; 
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
         }
-        #player-wrapper:hover #progress-slider::-webkit-slider-thumb {
-            opacity: 1;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 0; height: 0;
         }
+        input[type="range"]::-moz-range-thumb {
+            width: 0; height: 0; border: none;
+        }
+
+        /* Tùy biến cục tròn Youtube cho thanh tua nhạc */
+        #progress-slider {
+            flex-grow: 1; 
+        }
+        #progress-slider::-webkit-slider-thumb {
+            width: 10px; height: 10px;
+            background: white; border-radius: 50%;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        #player-wrapper:hover #progress-slider::-webkit-slider-thumb { opacity: 1; }
+
+        /* 3. Cụm loa nằm bên phải (Được chốt cứng kích thước để khi trượt không bị giật khung) */
+        #volume-wrapper {
+            width: 140px; 
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .speaker-icon {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: #cccccc; 
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            cursor: pointer;
+            transition: stroke 0.3s ease;
+        }
+        #volume-wrapper:hover .speaker-icon { stroke: #ffffff; }
+
+        #volume-slider-container {
+            width: 0;
+            overflow: hidden;
+            margin-left: 0;
+            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), margin-left 0.4s ease;
+            display: flex;
+            align-items: center;
+        }
+        #volume-wrapper:hover #volume-slider-container {
+            width: 100px; 
+            margin-left: 15px; 
+        }
+        #volume-slider { width: 100px; }
     </style>
 </head>
 <body>
@@ -230,17 +222,8 @@
         <button id="play-btn" onclick="startExperience()">▶</button>
     </div>
 
-    <div id="volume-wrapper">
-        <svg class="speaker-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-        </svg>
-        <div id="volume-slider-container">
-            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
-        </div>
-    </div>
-
     <div id="player-wrapper">
+        
         <div class="controls-row">
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
             
@@ -253,10 +236,24 @@
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
         </div>
         
-        <div class="progress-row">
-            <span id="current-time" class="time-text">0:00</span>
-            <input type="range" id="progress-slider" min="0" max="100" value="0">
-            <span id="total-time" class="time-text">0:00</span>
+        <div class="bottom-bar">
+            <div class="balance-spacer"></div>
+            
+            <div class="progress-row">
+                <span id="current-time" class="time-text">0:00</span>
+                <input type="range" id="progress-slider" min="0" max="100" value="0">
+                <span id="total-time" class="time-text">0:00</span>
+            </div>
+            
+            <div id="volume-wrapper">
+                <svg class="speaker-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <div id="volume-slider-container">
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -265,16 +262,15 @@
         var video = document.getElementById("bg-video");
         var overlay = document.getElementById("overlay");
         
-        var volumeWrapper = document.getElementById("volume-wrapper");
+        var playerWrapper = document.getElementById("player-wrapper");
         var volumeSlider = document.getElementById("volume-slider");
         
-        var playerWrapper = document.getElementById("player-wrapper");
         var progressSlider = document.getElementById("progress-slider");
         var currentTimeEl = document.getElementById("current-time");
         var totalTimeEl = document.getElementById("total-time");
         var iconPath = document.getElementById("icon-path");
 
-        // Set màu thanh âm lượng ban đầu
+        // Set màu thanh âm lượng ban đầu (100%)
         volumeSlider.style.background = `linear-gradient(to right, white 100%, rgba(255, 255, 255, 0.3) 100%)`;
 
         // ==========================================
@@ -285,10 +281,7 @@
             video.style.filter = "blur(0px)";
             overlay.style.opacity = "0";
             
-            volumeWrapper.style.opacity = "1";
-            volumeWrapper.style.pointerEvents = "auto";
-            
-            // Hiện bảng điều khiển nhạc
+            // Chỉ cần gọi hiện toàn bộ cụm nhạc (cả loa và timeline đi kèm luôn)
             playerWrapper.style.opacity = "1";
             playerWrapper.style.pointerEvents = "auto";
             
@@ -305,10 +298,8 @@
         });
 
         // ==========================================
-        // 3. HÀM XỬ LÝ THANH PHÁT NHẠC
+        // 3. HÀM XỬ LÝ THANH PHÁT NHẠC (TIMELINE)
         // ==========================================
-        
-        // Đổi giây thành định dạng Phút:Giây (VD: 2:59)
         function formatTime(seconds) {
             if (isNaN(seconds)) return "0:00";
             var m = Math.floor(seconds / 60);
@@ -316,38 +307,31 @@
             return m + ":" + (s < 10 ? "0" + s : s);
         }
 
-        // Khi load được thông tin bài hát (độ dài)
         music.addEventListener("loadedmetadata", function() {
             totalTimeEl.textContent = formatTime(music.duration);
         });
 
-        // Cập nhật thanh chạy liên tục khi nhạc đang phát
         music.addEventListener("timeupdate", function() {
             if(music.duration) {
                 var currentPercent = (music.currentTime / music.duration) * 100;
                 progressSlider.value = currentPercent;
                 currentTimeEl.textContent = formatTime(music.currentTime);
-                // Tô màu trắng cho phần đã phát
                 progressSlider.style.background = `linear-gradient(to right, white ${currentPercent}%, rgba(255, 255, 255, 0.3) ${currentPercent}%)`;
             }
         });
 
-        // Tua bài hát khi kéo thanh
         progressSlider.addEventListener("input", function() {
             var seekTime = (this.value / 100) * music.duration;
             music.currentTime = seekTime;
             this.style.background = `linear-gradient(to right, white ${this.value}%, rgba(255, 255, 255, 0.3) ${this.value}%)`;
         });
 
-        // Tạm dừng / Phát tiếp khi bấm nút giữa
         function togglePlayPause() {
             if (music.paused) {
                 music.play();
-                // Đổi thành icon Pause (2 sọc)
                 iconPath.setAttribute("d", "M6 19h4V5H6v14zm8-14v14h4V5h-4z"); 
             } else {
                 music.pause();
-                // Đổi thành icon Play (Tam giác)
                 iconPath.setAttribute("d", "M8 5v14l11-7z");
             }
         }
