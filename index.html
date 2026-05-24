@@ -15,11 +15,13 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+
+        /* Hiệu ứng nghiêng qua nghiêng lại */
         @keyframes swing {
-    0% { transform: rotate(-10deg); }
-    50% { transform: rotate(10deg); }
-    100% { transform: rotate(-10deg); }
-}
+            0% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+            100% { transform: rotate(-10deg); }
+        }
 
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #050505; font-family: 'Segoe UI', sans-serif; }
         
@@ -34,20 +36,20 @@
 
         .controls-row { display: flex; align-items: center; gap: 50px; margin-bottom: 30px; }
 
-        /* Đĩa nhạc lớn và hiệu ứng đứng yên */
+        /* Đĩa nhạc lớn, quay và nghiêng */
         #disc-img {
             width: 180px; height: 180px; border-radius: 50%;
             border: 5px solid rgba(255,255,255,0.2);
             cursor: pointer; transition: 0.3s;
             box-shadow: 0 0 25px rgba(255,255,255,0.3);
             object-fit: cover;
-            animation: spin 4s linear infinite;
-            animation-play-state: paused; /* Mặc định đứng yên */
+            /* Kết hợp quay và nghiêng, mặc định tạm dừng */
+            animation: spin 4s linear infinite, swing 2s ease-in-out infinite;
+            animation-play-state: paused;
         }
+        
         .is-spinning {
-    animation: spin 4s linear infinite, swing 2s ease-in-out infinite;
-    animation-play-state: running !important;
-}
+            animation-play-state: running !important;
         }
         
         .skip-icon { width: 35px; height: 35px; fill: #aaa; cursor: pointer; transition: 0.3s; }
@@ -134,18 +136,4 @@
             if(!music.duration) return;
             const percent = (music.currentTime / music.duration) * 100;
             progressSlider.value = percent;
-            currentTimeEl.textContent = formatTime(music.currentTime);
-            progressSlider.style.background = `linear-gradient(to right, var(--accent-color) ${percent}%, rgba(255, 255, 255, 0.1) ${percent}%)`;
-        });
-
-        progressSlider.addEventListener("input", function() {
-            music.currentTime = (this.value / 100) * music.duration;
-            this.style.background = `linear-gradient(to right, var(--accent-color) ${this.value}%, rgba(255, 255, 255, 0.1) ${this.value}%)`;
-        });
-
-        volumeSlider.addEventListener("input", function() { music.volume = this.value; });
-        function formatTime(s) { let m = Math.floor(s/60); let sec = Math.floor(s%60); return `${m}:${sec < 10 ? '0'+sec : sec}`; }
-        music.addEventListener("loadedmetadata", () => totalTimeEl.textContent = formatTime(music.duration));
-    </script>
-</body>
-</html>
+            currentTimeEl
