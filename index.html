@@ -5,9 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neon Music Player</title>
     <style>
+        /* BẢNG MÀU TÙY CHỈNH */
+        :root {
+            --accent-color: #ff007f;    /* Màu hồng Neon chủ đạo */
+            --secondary-color: #ffaa00; /* Màu cam vàng cho các điểm nhấn */
+            --bg-overlay: rgba(0, 0, 0, 0.6);
+        }
+
         body, html {
             margin: 0; padding: 0; height: 100%; overflow: hidden;
-            background-color: #050505; font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #050505; font-family: 'Segoe UI', sans-serif;
         }
         
         #bg-video {
@@ -17,79 +24,54 @@
 
         #overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); display: flex;
+            background-color: var(--bg-overlay); display: flex;
             justify-content: center; align-items: center; z-index: 10; transition: opacity 1s ease;
         }
 
         #play-btn {
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid #00f2ff;
+            background: transparent; border: 2px solid var(--accent-color);
             border-radius: 50%; width: 80px; height: 80px;
-            color: #00f2ff; font-size: 35px; cursor: pointer;
-            box-shadow: 0 0 15px #00f2ff, inset 0 0 10px #00f2ff;
-            backdrop-filter: blur(5px); transition: 0.3s;
+            color: var(--accent-color); font-size: 30px; cursor: pointer;
+            box-shadow: 0 0 15px var(--accent-color); transition: 0.3s;
         }
-        #play-btn:hover {
-            background: #00f2ff; color: black;
-            box-shadow: 0 0 30px #00f2ff; transform: scale(1.1);
-        }
+        #play-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 30px var(--accent-color); }
 
         #player-wrapper {
-            position: absolute; bottom: 40px; left: 50%;
-            transform: translateX(-50%); display: flex; flex-direction: column;
-            align-items: center; width: 750px; max-width: 95%; z-index: 5;
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center;
+            width: 750px; max-width: 95%; z-index: 5;
             opacity: 0; pointer-events: none; transition: opacity 1.5s ease;
         }
 
-        .controls-row { display: flex; align-items: center; gap: 30px; margin-bottom: 20px; }
+        .controls-row { display: flex; align-items: center; gap: 25px; margin-bottom: 15px; }
 
-        .skip-icon {
-            width: 25px; height: 25px; fill: #ff00ff; cursor: pointer;
-            filter: drop-shadow(0 0 5px #ff00ff); transition: 0.3s;
-        }
-        .skip-icon:hover { fill: #fff; filter: drop-shadow(0 0 10px #fff); }
+        .skip-icon { width: 20px; height: 20px; fill: #aaa; cursor: pointer; transition: 0.3s; }
+        .skip-icon:hover { fill: var(--accent-color); }
 
         #center-play-btn {
-            width: 55px; height: 55px; background: rgba(0,0,0,0.5);
-            border: 2px solid #ff00ff; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; box-shadow: 0 0 15px #ff00ff; transition: 0.3s;
+            width: 50px; height: 50px; background: var(--accent-color);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px var(--accent-color);
         }
-        #center-play-btn:hover { background: #ff00ff; box-shadow: 0 0 30px #ff00ff; }
-        
-        .center-icon { width: 22px; height: 22px; fill: #ff00ff; transition: 0.3s; }
-        #center-play-btn:hover .center-icon { fill: black; }
+        #center-play-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--accent-color); }
+        .center-icon { width: 20px; height: 20px; fill: white; }
 
-        .bottom-bar { display: flex; align-items: center; width: 100%; gap: 20px; }
-        .balance-spacer { width: 140px; }
-
-        /* Style chung cho các thanh trượt */
+        /* Thanh tiến trình Neon */
         input[type="range"] {
-            -webkit-appearance: none; height: 6px;
-            background: rgba(255, 255, 255, 0.1); border-radius: 3px;
+            -webkit-appearance: none; height: 4px;
+            background: rgba(255, 255, 255, 0.1); border-radius: 2px; cursor: pointer;
         }
-        
-        /* Thanh tiến trình có hiệu ứng Neon */
-        #progress-slider { flex-grow: 1; }
         #progress-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 14px; height: 14px;
-            background: #00f2ff; border-radius: 50%;
-            box-shadow: 0 0 10px #00f2ff; opacity: 0; transition: 0.2s;
+            -webkit-appearance: none; width: 12px; height: 12px;
+            background: var(--accent-color); border-radius: 50%;
+            opacity: 0; transition: 0.2s;
         }
         #player-wrapper:hover #progress-slider::-webkit-slider-thumb { opacity: 1; }
 
-        /* Thanh âm lượng giữ nguyên mặc định */
-        #volume-slider { width: 100px; }
+        .time-text { color: white; font-size: 12px; min-width: 35px; text-align: center; }
 
-        .speaker-icon {
-            width: 26px; height: 26px; fill: none; stroke: #00f2ff;
-            stroke-width: 2; cursor: pointer; filter: drop-shadow(0 0 5px #00f2ff);
-        }
-
-        #volume-slider-container { width: 0; overflow: hidden; transition: 0.4s; display: flex; align-items: center; }
-        #volume-wrapper:hover #volume-slider-container { width: 100px; margin-left: 10px; }
-        
-        .time-text { color: #fff; text-shadow: 0 0 8px #fff; font-size: 13px; min-width: 40px; text-align: center; }
+        .speaker-icon { width: 24px; height: 24px; fill: none; stroke: #aaa; stroke-width: 2; transition: 0.3s; }
+        #volume-wrapper:hover .speaker-icon { stroke: var(--secondary-color); }
     </style>
 </head>
 <body>
@@ -110,16 +92,15 @@
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
         </div>
         
-        <div class="bottom-bar">
-            <div class="balance-spacer"></div>
-            <div class="progress-row" style="flex-grow:1; display:flex; align-items:center; gap:15px;">
+        <div class="bottom-bar" style="display:flex; align-items:center; width:100%;">
+            <div style="width:140px;"></div>
+            <div class="progress-row" style="flex-grow:1; display:flex; align-items:center; gap:15px; padding:0 15px;">
                 <span id="current-time" class="time-text">0:00</span>
-                <input type="range" id="progress-slider" min="0" max="100" value="0">
+                <input type="range" id="progress-slider" min="0" max="100" value="0" style="flex-grow:1;">
                 <span id="total-time" class="time-text">0:00</span>
             </div>
-            <div id="volume-wrapper" style="display:flex; align-items:center; width:140px;">
+            <div id="volume-wrapper" style="width:140px; display:flex; align-items:center;">
                 <svg class="speaker-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                <div id="volume-slider-container"><input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1"></div>
             </div>
         </div>
     </div>
@@ -130,7 +111,6 @@
         const overlay = document.getElementById("overlay");
         const playerWrapper = document.getElementById("player-wrapper");
         const progressSlider = document.getElementById("progress-slider");
-        const volumeSlider = document.getElementById("volume-slider");
         const iconPath = document.getElementById("icon-path");
         const currentTimeEl = document.getElementById("current-time");
         const totalTimeEl = document.getElementById("total-time");
@@ -142,21 +122,22 @@
             setTimeout(() => overlay.style.display = "none", 1000);
         }
 
-        // Chỉ cập nhật màu cho thanh tiến trình
+        // Hàm cập nhật màu gradient cho thanh tiến trình
+        function updateProgressColor(val) {
+            progressSlider.style.background = `linear-gradient(to right, var(--accent-color) ${val}%, rgba(255, 255, 255, 0.1) ${val}%)`;
+        }
+
         music.addEventListener("timeupdate", () => {
             if(!music.duration) return;
             const percent = (music.currentTime / music.duration) * 100;
             progressSlider.value = percent;
             currentTimeEl.textContent = formatTime(music.currentTime);
-            progressSlider.style.background = `linear-gradient(to right, #00f2ff ${percent}%, rgba(255,255,255,0.1) ${percent}%)`;
-        });
-
-        volumeSlider.addEventListener("input", function() {
-            music.volume = this.value;
+            updateProgressColor(percent);
         });
 
         progressSlider.addEventListener("input", function() {
             music.currentTime = (this.value / 100) * music.duration;
+            updateProgressColor(this.value);
         });
 
         function formatTime(s) {
@@ -167,8 +148,13 @@
         music.addEventListener("loadedmetadata", () => totalTimeEl.textContent = formatTime(music.duration));
 
         function togglePlayPause() {
-            if (music.paused) { music.play(); iconPath.setAttribute("d", "M6 19h4V5H6v14zm8-14v14h4V5h-4z"); }
-            else { music.pause(); iconPath.setAttribute("d", "M8 5v14l11-7z"); }
+            if (music.paused) { 
+                music.play(); 
+                iconPath.setAttribute("d", "M6 19h4V5H6v14zm8-14v14h4V5h-4z"); 
+            } else { 
+                music.pause(); 
+                iconPath.setAttribute("d", "M8 5v14l11-7z"); 
+            }
         }
     </script>
 </body>
