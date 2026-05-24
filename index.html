@@ -5,212 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang web của tôi</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background-color: black;
-            font-family: Arial, sans-serif;
-        }
-        
-        /* Video nền */
-        #bg-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transform: scale(1.1); 
-            filter: blur(25px); 
-            transition: filter 1.5s ease; 
-        }
+    body, html {
+        margin: 0; padding: 0; height: 100%; overflow: hidden;
+        background-color: #050505; font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    
+    #bg-video {
+        width: 100%; height: 100%; object-fit: cover;
+        transform: scale(1.1); filter: blur(25px); transition: filter 1.5s ease; 
+    }
 
-        /* Lớp phủ màn hình lúc chưa bấm */
-        #overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            transition: opacity 1s ease;
-        }
+    /* Lớp phủ màn hình */
+    #overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); display: flex;
+        justify-content: center; align-items: center; z-index: 10; transition: opacity 1s ease;
+    }
 
-        /* Nút Play/Mở dạng hình tròn */
-        #play-btn {
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            color: white;
-            font-size: 35px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-left: 8px;
-            backdrop-filter: blur(5px);
-            transition: 0.3s;
-        }
-        
-        #play-btn:hover {
-            background-color: white;
-            color: black;
-            transform: scale(1.1);
-        }
+    /* Nút Play đầu tiên với hiệu ứng Neon */
+    #play-btn {
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid #00f2ff;
+        border-radius: 50%; width: 80px; height: 80px;
+        color: #00f2ff; font-size: 35px; cursor: pointer;
+        box-shadow: 0 0 15px #00f2ff, inset 0 0 10px #00f2ff;
+        backdrop-filter: blur(5px); transition: 0.3s;
+    }
+    #play-btn:hover {
+        background: #00f2ff; color: black;
+        box-shadow: 0 0 30px #00f2ff; transform: scale(1.1);
+    }
 
-        /* =========================================
-           CỤM GIAO DIỆN PHÁT NHẠC TỔNG THỂ
-           ========================================= */
-        #player-wrapper {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 750px; /* Đủ rộng cho cả Timeline và Loa */
-            max-width: 95%;
-            z-index: 5;
-            opacity: 0; 
-            pointer-events: none;
-            transition: opacity 1.5s ease;
-        }
+    /* Cụm Player */
+    #player-wrapper {
+        position: absolute; bottom: 40px; left: 50%;
+        transform: translateX(-50%); display: flex; flex-direction: column;
+        align-items: center; width: 750px; max-width: 95%; z-index: 5;
+        opacity: 0; pointer-events: none; transition: opacity 1.5s ease;
+    }
 
-        /* Hàng chứa các nút bấm (Prev - Play - Next) */
-        .controls-row {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-            margin-bottom: 15px;
-        }
+    .controls-row { display: flex; align-items: center; gap: 30px; margin-bottom: 20px; }
 
-        .skip-icon {
-            width: 20px;
-            height: 20px;
-            fill: #999;
-            cursor: pointer;
-            transition: fill 0.3s;
-        }
-        .skip-icon:hover { fill: #fff; }
+    .skip-icon {
+        width: 25px; height: 25px; fill: #ff00ff; cursor: pointer;
+        filter: drop-shadow(0 0 5px #ff00ff); transition: 0.3s;
+    }
+    .skip-icon:hover { fill: #fff; filter: drop-shadow(0 0 10px #fff); }
 
-        #center-play-btn {
-            width: 45px;
-            height: 45px;
-            background-color: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        #center-play-btn:hover { transform: scale(1.1); }
-        
-        .center-icon {
-            width: 20px;
-            height: 20px;
-            fill: black;
-        }
+    #center-play-btn {
+        width: 55px; height: 55px; background: rgba(0,0,0,0.5);
+        border: 2px solid #ff00ff; border-radius: 50%;
+        display: flex; justify-content: center; align-items: center;
+        cursor: pointer; box-shadow: 0 0 15px #ff00ff; transition: 0.3s;
+    }
+    #center-play-btn:hover { background: #ff00ff; box-shadow: 0 0 30px #ff00ff; }
+    
+    .center-icon { width: 22px; height: 22px; fill: #ff00ff; transition: 0.3s; }
+    #center-play-btn:hover .center-icon { fill: black; }
 
-        /* =========================================
-           HÀNG CHỨA TIMELINE + LOA (Bố cục 3 phần cân bằng)
-           ========================================= */
-        .bottom-bar {
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
+    /* Thanh Tua & Loa Neon */
+    .bottom-bar { display: flex; align-items: center; width: 100%; gap: 20px; }
+    .balance-spacer { width: 140px; }
 
-        /* 1. Cục Spacer tàng hình bên trái (Giúp tạo lực đẩy cân bằng hoàn hảo với cục Loa bên phải) */
-        .balance-spacer {
-            width: 140px; 
-        }
+    input[type="range"] {
+        -webkit-appearance: none; height: 6px;
+        background: rgba(255, 255, 255, 0.1); border-radius: 3px;
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Màu Neon cho thanh tiến trình */
+    #progress-slider { flex-grow: 1; }
+    #progress-slider::-webkit-slider-thumb {
+        -webkit-appearance: none; width: 14px; height: 14px;
+        background: #00f2ff; border-radius: 50%;
+        box-shadow: 0 0 10px #00f2ff; opacity: 0; transition: 0.2s;
+    }
+    #player-wrapper:hover #progress-slider::-webkit-slider-thumb { opacity: 1; }
 
-        /* 2. Cụm thanh tua nhạc nằm chính giữa */
-        .progress-row {
-            flex-grow: 1; /* Tự động kéo dài chiếm không gian trống ở giữa */
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 0 15px;
-        }
+    .speaker-icon {
+        width: 26px; height: 26px; fill: none; stroke: #00f2ff;
+        stroke-width: 2; cursor: pointer; filter: drop-shadow(0 0 5px #00f2ff);
+    }
 
-        .time-text {
-            color: #d1d1d1;
-            font-size: 13px;
-            min-width: 35px;
-            text-align: center;
-            user-select: none;
-        }
-
-        /* Dùng chung CSS cho thanh kéo (Tua nhạc & Âm lượng) */
-        input[type="range"] {
-            -webkit-appearance: none;
-            height: 4px; 
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 2px;
-            outline: none;
-            cursor: pointer;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 0; height: 0;
-        }
-        input[type="range"]::-moz-range-thumb {
-            width: 0; height: 0; border: none;
-        }
-
-        /* Tùy biến cục tròn Youtube cho thanh tua nhạc */
-        #progress-slider {
-            flex-grow: 1; 
-        }
-        #progress-slider::-webkit-slider-thumb {
-            width: 10px; height: 10px;
-            background: white; border-radius: 50%;
-            opacity: 0; transition: opacity 0.2s;
-        }
-        #player-wrapper:hover #progress-slider::-webkit-slider-thumb { opacity: 1; }
-
-        /* 3. Cụm loa nằm bên phải (Được chốt cứng kích thước để khi trượt không bị giật khung) */
-        #volume-wrapper {
-            width: 140px; 
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        .speaker-icon {
-            width: 24px;
-            height: 24px;
-            fill: none;
-            stroke: #cccccc; 
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            cursor: pointer;
-            transition: stroke 0.3s ease;
-        }
-        #volume-wrapper:hover .speaker-icon { stroke: #ffffff; }
-
-        #volume-slider-container {
-            width: 0;
-            overflow: hidden;
-            margin-left: 0;
-            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), margin-left 0.4s ease;
-            display: flex;
-            align-items: center;
-        }
-        #volume-wrapper:hover #volume-slider-container {
-            width: 100px; 
-            margin-left: 15px; 
-        }
-        #volume-slider { width: 100px; }
+    #volume-slider { width: 100px; }
+    
+    .time-text { color: #fff; text-shadow: 0 0 8px #fff; font-size: 13px; }
     </style>
 </head>
 <body>
