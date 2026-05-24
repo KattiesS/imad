@@ -11,9 +11,17 @@
             --bg-overlay: rgba(0, 0, 0, 0.6);
         }
 
+        /* Hiệu ứng quay tròn */
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+
+        /* Hiệu ứng nghiêng qua lại */
+        @keyframes swing {
+            0% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+            100% { transform: rotate(-10deg); }
         }
 
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #050505; font-family: 'Segoe UI', sans-serif; }
@@ -29,18 +37,29 @@
 
         .controls-row { display: flex; align-items: center; gap: 50px; margin-bottom: 30px; }
 
-        /* Đĩa nhạc lớn và hiệu ứng đứng yên */
+        /* Đĩa nhạc: Quay + Nghiêng + Hiệu ứng tương tác */
         #disc-img {
             width: 180px; height: 180px; border-radius: 50%;
             border: 5px solid rgba(255,255,255,0.2);
-            cursor: pointer; transition: 0.3s;
+            cursor: pointer; 
             box-shadow: 0 0 25px rgba(255,255,255,0.3);
             object-fit: cover;
-            animation: spin 4s linear infinite;
-            animation-play-state: paused; /* Mặc định đứng yên */
+            animation: spin 4s linear infinite, swing 2s ease-in-out infinite;
+            animation-play-state: paused;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, filter 0.3s;
         }
+
+        #disc-img:hover {
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
+            filter: brightness(1.2);
+        }
+
+        #disc-img:active {
+            transform: scale(0.85); /* Hiệu ứng nhún khi nhấn */
+        }
+
         .is-spinning {
-            animation-play-state: running !important; /* Khi phát thì quay tiếp */
+            animation-play-state: running !important;
         }
         
         .skip-icon { width: 35px; height: 35px; fill: #aaa; cursor: pointer; transition: 0.3s; }
@@ -60,7 +79,7 @@
 </head>
 <body>
 
-    <video id="bg-video" src="marin1.mp4" autoplay loop muted playsinline></video>
+    <video id="bg-video" src="marin1.mp4" autoplay loop muted playsinline preload="auto"></video>
     <audio id="bg-music" src="nhac.mp3" loop></audio>
 
     <div id="overlay">
@@ -70,9 +89,7 @@
     <div id="player-wrapper">
         <div class="controls-row">
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-            
             <img id="disc-img" src="disc.jpg" onclick="togglePlayPause()" alt="Vinyl Record">
-            
             <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
         </div>
         
