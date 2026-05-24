@@ -27,18 +27,18 @@
 
         #player-wrapper { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: 750px; max-width: 95%; z-index: 5; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
 
-        .controls-row { display: flex; align-items: center; gap: 30px; margin-bottom: 15px; }
+        .controls-row { display: flex; align-items: center; gap: 40px; margin-bottom: 25px; }
 
-        /* Style cho đĩa nhạc */
+        /* Đĩa nhạc đã to hơn */
         #disc-img {
-            width: 60px; height: 60px; border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.2);
+            width: 120px; height: 120px; border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.2);
             cursor: pointer; transition: 0.3s;
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
         }
         .is-spinning { animation: spin 4s linear infinite; }
         
-        .skip-icon { width: 20px; height: 20px; fill: #aaa; cursor: pointer; transition: 0.3s; }
+        .skip-icon { width: 25px; height: 25px; fill: #aaa; cursor: pointer; transition: 0.3s; }
         .skip-icon:hover { fill: var(--accent-color); }
 
         input[type="range"] { -webkit-appearance: none; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; cursor: pointer; }
