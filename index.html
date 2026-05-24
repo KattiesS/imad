@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
- 
+    
     <style>
         body, html {
             margin: 0;
@@ -11,32 +11,18 @@
             height: 100%;
             overflow: hidden;
             background-color: black;
-            position: relative; /* Thêm cái này để tấm kính mờ bám theo màn hình */
         }
         video {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
-        /* Tạo một vùng làm mờ đè lên phụ đề */
-        .che-chu {
-            position: absolute;
-            bottom: 0;           /* Nằm sát dưới cùng màn hình */
-            left: 0;
-            width: 100%;         /* Trải dài hết chiều ngang */
-            height: 15%;         /* Độ cao của dải mờ (chỉnh số này to nhỏ tùy chữ cao hay thấp) */
-            backdrop-filter: blur(15px); /* Chỉnh độ mờ đục */
-            -webkit-backdrop-filter: blur(15px); /* Hỗ trợ cho Safari */
-        }
     </style>
 </head>
 <body>
 
+    <!-- Video sẽ tự động chạy, lặp lại và tắt tiếng -->
     <video src="marin1.mp4" autoplay loop muted playsinline></video>
-    
-    <!-- Tấm kính mờ che chữ -->
-    <div class="che-chu"></div>
 
 </body>
 </html>
