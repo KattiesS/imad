@@ -11,6 +11,7 @@
             height: 100%;
             overflow: hidden;
             background-color: black;
+            font-family: Arial, sans-serif; /* Thêm font chữ cơ bản cho icon loa */
         }
         
         /* Video nền */
@@ -18,11 +19,8 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* Phóng to video lên một xíu để viền mờ không bị lộ viền đen */
             transform: scale(1.1); 
-            /* Làm mờ video thật nhiều lúc ban đầu */
             filter: blur(25px); 
-            /* Hiệu ứng mờ dần đi trong 1.5 giây khi được mở */
             transition: filter 1.5s ease; 
         }
 
@@ -33,12 +31,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.4); /* Phủ một lớp màu đen mờ để làm nổi bật nút bấm */
+            background-color: rgba(0, 0, 0, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 10;
-            transition: opacity 1s ease; /* Hiệu ứng biến mất mượt mà */
+            transition: opacity 1s ease;
         }
 
         /* Nút Play/Mở dạng hình tròn */
@@ -54,16 +52,47 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding-left: 8px; /* Đẩy icon Play ra giữa một chút cho cân đối */
-            backdrop-filter: blur(5px); /* Làm mờ nhẹ bên dưới cái nút */
+            padding-left: 8px;
+            backdrop-filter: blur(5px);
             transition: 0.3s;
         }
         
-        /* Hiệu ứng khi rê chuột vào nút */
         #play-btn:hover {
             background-color: white;
             color: black;
-            transform: scale(1.1); /* Phóng to nhẹ */
+            transform: scale(1.1);
+        }
+
+        /* ----- CSS MỚI CHO THANH ÂM LƯỢNG ----- */
+        #volume-container {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(0, 0, 0, 0.4); /* Nền mờ cho thanh âm lượng */
+            padding: 10px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            z-index: 5;
+            
+            /* Ban đầu ẩn đi */
+            opacity: 0; 
+            pointer-events: none;
+            transition: opacity 1.5s ease; /* Hiệu ứng hiện ra mượt mà */
+        }
+
+        #volume-icon {
+            font-size: 20px;
+            color: white;
+            user-select: none; /* Tránh bôi đen nhầm icon */
+        }
+
+        #volume-slider {
+            width: 100px;
+            cursor: pointer;
+            accent-color: white; /* Đổi màu thanh kéo thành trắng */
         }
     </style>
 </head>
@@ -81,13 +110,25 @@
         <button id="play-btn" onclick="startExperience()">▶</button>
     </div>
 
+    <!-- ----- GIAO DIỆN THANH ÂM LƯỢNG ----- -->
+    <div id="volume-container">
+        <span id="volume-icon">🔊</span>
+        <!-- Thanh kéo: min là 0 (tắt tiếng), max là 1 (to nhất) -->
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+    </div>
+
     <!-- Script xử lý hiệu ứng -->
     <script>
+        // Khai báo các phần tử trên web
+        var music = document.getElementById("bg-music");
+        var video = document.getElementById("bg-video");
+        var overlay = document.getElementById("overlay");
+        
+        var volumeContainer = document.getElementById("volume-container");
+        var volumeSlider = document.getElementById("volume-slider");
+        var volumeIcon = document.getElementById("volume-icon");
+
         function startExperience() {
-            var music = document.getElementById("bg-music");
-            var video = document.getElementById("bg-video");
-            var overlay = document.getElementById("overlay");
-            
             // 1. Phát nhạc
             music.play();
             
@@ -96,12 +137,31 @@
             
             // 3. Làm mờ lớp phủ màu đen đi
             overlay.style.opacity = "0";
+
+            // 4. Hiện thanh âm lượng lên
+            volumeContainer.style.opacity = "1";
+            volumeContainer.style.pointerEvents = "auto";
             
-            // 4. Xóa hẳn lớp phủ sau khi hiệu ứng tan biến hoàn tất (sau 1 giây)
+            // 5. Xóa hẳn lớp phủ sau khi hiệu ứng tan biến hoàn tất (sau 1 giây)
             setTimeout(function() {
                 overlay.style.display = "none";
             }, 1000);
         }
+
+        // ----- LỆNH XỬ LÝ KHI KÉO THANH ÂM LƯỢNG -----
+        volumeSlider.addEventListener("input", function() {
+            // Chỉnh âm lượng nhạc bằng giá trị của thanh kéo (từ 0 đến 1)
+            music.volume = this.value;
+            
+            // Đổi icon loa tương ứng với độ to nhỏ
+            if (this.value == 0) {
+                volumeIcon.textContent = "🔇";
+            } else if (this.value < 0.5) {
+                volumeIcon.textContent = "🔉";
+            } else {
+                volumeIcon.textContent = "🔊";
+            }
+        });
     </script>
 
 </body>
