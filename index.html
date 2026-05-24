@@ -16,7 +16,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Hiệu ứng nghiêng lắc lư 3D khi hover */
         @keyframes tiltRock {
             0% { transform: rotateX(15deg) rotateY(-15deg); }
             50% { transform: rotateX(10deg) rotateY(15deg); }
@@ -36,19 +35,16 @@
 
         .controls-row { display: flex; align-items: center; gap: 50px; margin-bottom: 30px; }
 
-        /* Bọc đĩa nhạc để xử lý không gian 3D */
         .disc-container {
             perspective: 1000px;
             perspective-origin: center;
             transition: transform 0.5s ease;
         }
 
-        /* Khi rê chuột vào, kích hoạt animation nghiêng lắc lư */
         .disc-container:hover {
             animation: tiltRock 2.5s ease-in-out infinite;
         }
 
-        /* Đĩa nhạc lớn bên trong */
         #disc-img {
             width: 180px; height: 180px; border-radius: 50%;
             border: 5px solid rgba(255,255,255,0.2);
@@ -56,12 +52,12 @@
             box-shadow: 0 0 25px rgba(255,255,255,0.3);
             object-fit: cover;
             animation: spin 4s linear infinite;
-            animation-play-state: paused; /* Mặc định đứng yên */
+            animation-play-state: paused;
             display: block;
         }
         
         .is-spinning {
-            animation-play-state: running !important; /* Khi phát thì quay tiếp */
+            animation-play-state: running !important;
         }
         
         .skip-icon { width: 35px; height: 35px; fill: #aaa; cursor: pointer; transition: 0.3s; }
@@ -78,7 +74,6 @@
         #volume-wrapper:hover #volume-slider-container { width: 100px; margin-left: 10px; }
         #volume-slider { width: 100px; }
 
-        /* KHUNG KÍNH MỜ GÓC TRÁI DƯỚI */
         #track-info-box {
             position: absolute;
             bottom: 30px;
@@ -88,7 +83,7 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-left: 4px solid var(--accent-color); /* Tạo một vạch nhấn neon ở cạnh trái */
+            border-left: 4px solid var(--accent-color);
             border-radius: 8px;
             padding: 15px 25px;
             min-width: 200px;
@@ -97,7 +92,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 1.5s ease, transform 1.5s ease;
-            transform: translateY(10px); /* Nhấc nhẹ khi xuất hiện */
+            transform: translateY(10px);
         }
         .track-title {
             color: #fff;
@@ -121,8 +116,8 @@
 </head>
 <body>
 
-    <video id="bg-video" src="marin1.mp4" autoplay loop muted playsinline></video>
-    <audio id="bg-music" src="nhac.mp3" loop></audio>
+    <video id="bg-video" autoplay loop muted playsinline></video>
+    <audio id="bg-music"></audio>
 
     <div id="overlay">
         <button id="play-btn" onclick="startExperience()">▶</button>
@@ -130,19 +125,21 @@
 
     <!-- KHUNG KÍNH MỜ THÔNG TIN BÀI HÁT -->
     <div id="track-info-box">
-        <p class="track-title">『HIDE AND SEEK』</p>
-        <p class="track-artist"> i-dle</p>
+        <p class="track-title" id="track-title">Loading...</p>
+        <p class="track-artist" id="track-artist">Loading...</p>
     </div>
 
     <div id="player-wrapper">
         <div class="controls-row">
-            <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            <!-- Nút Lùi Bài (Đã thêm onclick) -->
+            <svg class="skip-icon" viewBox="0 0 24 24" onclick="prevTrack()"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
             
             <div class="disc-container">
                 <img id="disc-img" src="disc.jpg" onclick="togglePlayPause()" alt="Vinyl Record">
             </div>
             
-            <svg class="skip-icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+            <!-- Nút Chuyển Bài (Đã thêm onclick) -->
+            <svg class="skip-icon" viewBox="0 0 24 24" onclick="nextTrack()"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
         </div>
         
         <div class="bottom-bar" style="display:flex; align-items:center; width:100%;">
@@ -162,16 +159,60 @@
     </div>
 
     <script>
+        // --- 1. DỮ LIỆU DANH SÁCH BÀI HÁT (PLAYLIST) ---
+        const playlist = [
+            {
+                title: "『 HIDE AND SEEK 』",
+                artist: "i-dle",
+                audio: "nhac.mp3",
+                video: "marin1.mp4",
+                disc: "disc.jpg"
+            },
+            {
+                title: "『 veil 』",
+                artist: "Keina Suda",
+                audio: "nhac2.mp3",  
+                video: "marin1.mp4", 
+                disc: "disc2.jpg"
+            },
+            {
+                title: "『 Fukashigi no Karte 』",
+                artist: "Various Voice Actors",
+                audio: "nhac3.mp3",
+                video: "marin1.mp4",
+                disc: "disc3.jpg"
+            }
+        ];
+
+        let currentTrackIndex = 0; // Vị trí bài hát đang phát
+
+        // --- 2. KẾT NỐI VỚI CÁC PHẦN TỬ HTML ---
         const music = document.getElementById("bg-music");
         const video = document.getElementById("bg-video");
+        const discImg = document.getElementById("disc-img");
+        const trackTitleEl = document.getElementById("track-title");
+        const trackArtistEl = document.getElementById("track-artist");
+
         const overlay = document.getElementById("overlay");
         const playerWrapper = document.getElementById("player-wrapper");
-        const discImg = document.getElementById("disc-img");
         const progressSlider = document.getElementById("progress-slider");
         const volumeSlider = document.getElementById("volume-slider");
         const currentTimeEl = document.getElementById("current-time");
         const totalTimeEl = document.getElementById("total-time");
         const trackInfoBox = document.getElementById("track-info-box");
+
+        // --- 3. HÀM TẢI BÀI HÁT THEO INDEX ---
+        function loadTrack(index) {
+            const track = playlist[index];
+            music.src = track.audio;
+            video.src = track.video;
+            discImg.src = track.disc;
+            trackTitleEl.textContent = track.title;
+            trackArtistEl.textContent = track.artist;
+        }
+
+        // Tải bài hát đầu tiên ngay khi mở web
+        loadTrack(currentTrackIndex);
 
         function startExperience() {
             music.play();
@@ -180,7 +221,6 @@
             playerWrapper.style.opacity = "1"; 
             playerWrapper.style.pointerEvents = "auto";
             
-            // Hiện khung thông tin bài hát đồng bộ mượt mà
             trackInfoBox.style.opacity = "1";
             trackInfoBox.style.pointerEvents = "auto";
             trackInfoBox.style.transform = "translateY(0)";
@@ -199,6 +239,37 @@
             }
         }
 
+        // --- 4. HÀM CHUYỂN BÀI (TỚI/LÙI) ---
+        function nextTrack() {
+            currentTrackIndex++;
+            if (currentTrackIndex >= playlist.length) {
+                currentTrackIndex = 0; // Quay lại bài đầu nếu hết danh sách
+            }
+            loadTrack(currentTrackIndex);
+            playAfterChange();
+        }
+
+        function prevTrack() {
+            currentTrackIndex--;
+            if (currentTrackIndex < 0) {
+                currentTrackIndex = playlist.length - 1; // Chuyển tới bài cuối nếu lùi từ bài đầu
+            }
+            loadTrack(currentTrackIndex);
+            playAfterChange();
+        }
+
+        // Tự động phát khi bấm nút next/prev nếu đang trong trạng thái "đã vào web"
+        function playAfterChange() {
+            if (overlay.style.display === "none") {
+                music.play();
+                discImg.classList.add("is-spinning");
+            }
+        }
+
+        // TỰ ĐỘNG CHUYỂN BÀI KHI BÀI HIỆN TẠI KẾT THÚC
+        music.addEventListener("ended", nextTrack);
+
+        // --- 5. ĐIỀU KHIỂN ÂM THANH & THANH THỜI GIAN ---
         music.addEventListener("timeupdate", () => {
             if(!music.duration) return;
             const percent = (music.currentTime / music.duration) * 100;
