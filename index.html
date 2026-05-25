@@ -104,12 +104,10 @@
         .social-link.discord:hover { color: #5865F2; filter: drop-shadow(0 0 10px #5865F2); transform: translateY(-3px) scale(1.1); }
         .social-link.tiktok:hover { color: #fe2c55; filter: drop-shadow(0 0 10px #fe2c55); transform: translateY(-3px) scale(1.1); }
 
-        /* === THÊM MỚI: KHUNG KÍNH MỜ GÓC PHẢI TRÊN (LYRICS) === */
+        /* === ĐÃ CHỈNH SỬA: KHUNG LYRICS KHÔNG CÒN KÍNH MỜ === */
         #lyrics-box {
             position: absolute; top: 40px; right: 40px; z-index: 5;
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-right: 4px solid var(--accent-color); border-radius: 8px;
-            padding: 20px 30px; width: 350px; height: 200px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            padding: 20px 30px; width: 350px; height: 200px;
             opacity: 0; pointer-events: none; transition: opacity 1.5s ease, transform 1.5s ease; transform: translateY(-10px);
             overflow: hidden; 
             /* Mask làm mờ dần ở cạnh trên và dưới để tạo độ sâu */
@@ -202,7 +200,6 @@
 
     <script>
         // --- 1. DỮ LIỆU DANH SÁCH BÀI HÁT (PLAYLIST) === THÊM MỚI LYRICS === ---
-        // Lưu ý: Cột "time" là số giây (Ví dụ: 10.5 là giây thứ 10.5). Bạn chỉnh lại cho khớp nhạc của bạn nhé.
         const playlist = [
             {
                 title: "『 HIDE AND SEEK 』",
@@ -254,7 +251,7 @@
         ];
 
         let currentTrackIndex = 0;
-        let currentLyricsData = []; // === THÊM MỚI ===
+        let currentLyricsData = []; 
 
         // --- 2. KẾT NỐI VỚI CÁC PHẦN TỬ HTML ---
         const music = document.getElementById("bg-music");
@@ -272,7 +269,6 @@
         const trackInfoBox = document.getElementById("track-info-box");
         const socialLinksBox = document.getElementById("social-links-box");
         
-        // === THÊM MỚI ===
         const lyricsBox = document.getElementById("lyrics-box");
         const lyricsContainer = document.getElementById("lyrics-container");
 
@@ -285,12 +281,11 @@
             trackTitleEl.textContent = track.title;
             trackArtistEl.textContent = track.artist;
             
-            // === THÊM MỚI: TẢI LYRICS ===
             currentLyricsData = track.lyrics || [];
             renderLyrics();
         }
 
-        // === THÊM MỚI: HÀM VẼ LỜI BÀI HÁT RA HTML ===
+        // --- HÀM VẼ LỜI BÀI HÁT RA HTML ---
         function renderLyrics() {
             lyricsContainer.innerHTML = "";
             lyricsContainer.style.transform = `translateY(80px)`; // Reset vị trí cuộn
@@ -312,7 +307,6 @@
             });
         }
 
-        // Tải bài hát đầu tiên ngay khi mở web
         loadTrack(currentTrackIndex);
 
         function startExperience() {
@@ -331,7 +325,6 @@
             socialLinksBox.style.pointerEvents = "auto";
             socialLinksBox.style.transform = "translateY(0)";
 
-            // === THÊM MỚI: Hiện khung Lyrics ===
             lyricsBox.style.opacity = "1";
             lyricsBox.style.pointerEvents = "auto";
             lyricsBox.style.transform = "translateY(0)";
@@ -386,17 +379,15 @@
             currentTimeEl.textContent = formatTime(music.currentTime);
             progressSlider.style.background = `linear-gradient(to right, var(--accent-color) ${percent}%, rgba(255, 255, 255, 0.1) ${percent}%)`;
             
-            // === THÊM MỚI: ĐỒNG BỘ LYRICS ===
             syncLyrics(music.currentTime);
         });
 
-        // === THÊM MỚI: HÀM XỬ LÝ CHẠY CHỮ ===
+        // --- HÀM XỬ LÝ CHẠY CHỮ ---
         let activeLyricIndex = -1;
         function syncLyrics(time) {
             if (currentLyricsData.length === 0) return;
 
             let newIndex = -1;
-            // Tìm dòng lyric đang hát dựa trên thời gian
             for (let i = 0; i < currentLyricsData.length; i++) {
                 if (time >= currentLyricsData[i].time) {
                     newIndex = i;
@@ -405,21 +396,16 @@
                 }
             }
 
-            // Nếu câu hát thay đổi thì mới cập nhật giao diện (để tránh giật lag)
             if (newIndex !== activeLyricIndex && newIndex !== -1) {
                 activeLyricIndex = newIndex;
                 
-                // Xóa class 'active' của tất cả các dòng
                 const allLines = document.querySelectorAll('.lyric-line');
                 allLines.forEach(line => line.classList.remove('active'));
                 
-                // Thêm class 'active' cho dòng hiện tại
                 const currentLineEl = document.getElementById(`lyric-line-${activeLyricIndex}`);
                 if (currentLineEl) {
                     currentLineEl.classList.add('active');
                     
-                    // Tính toán cuộn (Auto-scroll): Đẩy dòng hiện tại vào giữa khung (khung cao 200px)
-                    // (200 / 2) - chiều cao dòng / 2 - offset của dòng đó
                     const offsetTop = currentLineEl.offsetTop;
                     const transformY = 80 - offsetTop; 
                     lyricsContainer.style.transform = `translateY(${transformY}px)`;
@@ -431,7 +417,6 @@
             music.currentTime = (this.value / 100) * music.duration;
             this.style.background = `linear-gradient(to right, var(--accent-color) ${this.value}%, rgba(255, 255, 255, 0.1) ${this.value}%)`;
             
-            // Reset active lyric index khi tua nhạc
             activeLyricIndex = -1;
         });
 
