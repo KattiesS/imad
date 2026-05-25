@@ -75,7 +75,7 @@
         #volume-wrapper:hover #volume-slider-container { width: 100px; margin-left: 10px; }
         #volume-slider { width: 100px; }
 
-        /* KHUNG KÍNH MỜ GÓC TRÁI DƯỚI (INFO BÀI HÁT) */
+        /* KHUNG INFO BÀI HÁT */
         #track-info-box {
             position: absolute; bottom: 30px; left: 40px; z-index: 5;
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -86,7 +86,7 @@
         .track-title { color: #fff; font-size: 16px; font-weight: 600; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
         .track-artist { color: rgba(255, 255, 255, 0.6); font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* KHUNG KÍNH MỜ GÓC PHẢI DƯỚI (MẠNG XÃ HỘI) */
+        /* KHUNG MẠNG XÃ HỘI */
         #social-links-box {
             position: absolute; bottom: 30px; right: 40px; z-index: 5;
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -97,40 +97,57 @@
         .social-link { display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: all 0.3s ease; }
         .social-link svg { width: 100%; height: 100%; fill: currentColor; }
         
-        /* Hiệu ứng di chuột vào từng Icon */
         .social-link.youtube:hover { color: #ff0000; filter: drop-shadow(0 0 10px #ff0000); transform: translateY(-3px) scale(1.1); }
         .social-link.steam:hover { color: #00adee; filter: drop-shadow(0 0 10px #00adee); transform: translateY(-3px) scale(1.1); }
         .social-link.spotify:hover { color: #1db954; filter: drop-shadow(0 0 10px #1db954); transform: translateY(-3px) scale(1.1); }
         .social-link.discord:hover { color: #5865F2; filter: drop-shadow(0 0 10px #5865F2); transform: translateY(-3px) scale(1.1); }
         .social-link.tiktok:hover { color: #fe2c55; filter: drop-shadow(0 0 10px #fe2c55); transform: translateY(-3px) scale(1.1); }
 
-        /* === ĐÃ CHỈNH SỬA: KHUNG LYRICS KHÔNG CÒN KÍNH MỜ === */
+        /* === KHUNG LYRICS: CHỈ HIỂN THỊ CÂU ĐANG HÁT === */
         #lyrics-box {
             position: absolute; top: 40px; right: 40px; z-index: 5;
             padding: 20px 30px; width: 350px; height: 200px;
             opacity: 0; pointer-events: none; transition: opacity 1.5s ease, transform 1.5s ease; transform: translateY(-10px);
             overflow: hidden; 
-            /* Mask làm mờ dần ở cạnh trên và dưới để tạo độ sâu */
+            /* Mask làm mờ ranh giới viền để lúc chữ trôi đi nhìn mượt hơn */
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
         }
 
         #lyrics-container {
-            display: flex; flex-direction: column; align-items: flex-end; /* Căn phải */
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* Cuộn mượt mà */
-            transform: translateY(80px); /* Vị trí bắt đầu ở giữa khung */
+            position: relative; 
+            width: 100%; 
+            height: 100%;
         }
 
         .lyric-line {
-            color: rgba(255, 255, 255, 0.3); font-size: 15px; font-weight: 500;
-            margin: 10px 0; text-align: right; transition: all 0.4s ease;
+            position: absolute;
+            top: 50%; right: 0; width: 100%;
+            text-align: right; margin: 0;
             cursor: default; white-space: pre-wrap; line-height: 1.4;
+            color: #fff; font-size: 18px; font-weight: bold;
+            pointer-events: none;
+
+            /* Trạng thái chưa hát (nằm ở dưới, mờ tàng hình) */
+            opacity: 0;
+            filter: blur(8px);
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .lyric-line.active {
-            color: #fff; font-size: 18px; font-weight: bold;
+            /* Trạng thái đang hát (nổi lên đúng tâm) */
+            opacity: 1;
+            filter: blur(0px);
+            transform: translateY(-50%) scale(1.05);
             text-shadow: 0 0 15px var(--accent-color);
-            transform: scale(1.05); transform-origin: right center;
+        }
+
+        .lyric-line.past {
+            /* Trạng thái đã hát xong (trôi nhẹ lên và tan biến) */
+            opacity: 0;
+            filter: blur(8px);
+            transform: translateY(-100px) scale(0.95);
         }
     </style>
 </head>
@@ -149,8 +166,7 @@
     </div>
 
     <div id="lyrics-box">
-        <div id="lyrics-container">
-            </div>
+        <div id="lyrics-container"></div>
     </div>
 
     <div id="social-links-box">
@@ -199,7 +215,6 @@
     </div>
 
     <script>
-        // --- 1. DỮ LIỆU DANH SÁCH BÀI HÁT (PLAYLIST) === THÊM MỚI LYRICS === ---
         const playlist = [
             {
                 title: "『 HIDE AND SEEK 』",
@@ -253,7 +268,6 @@
         let currentTrackIndex = 0;
         let currentLyricsData = []; 
 
-        // --- 2. KẾT NỐI VỚI CÁC PHẦN TỬ HTML ---
         const music = document.getElementById("bg-music");
         const video = document.getElementById("bg-video");
         const discImg = document.getElementById("disc-img");
@@ -272,7 +286,6 @@
         const lyricsBox = document.getElementById("lyrics-box");
         const lyricsContainer = document.getElementById("lyrics-container");
 
-        // --- 3. HÀM TẢI BÀI HÁT THEO INDEX ---
         function loadTrack(index) {
             const track = playlist[index];
             music.src = track.audio;
@@ -285,14 +298,13 @@
             renderLyrics();
         }
 
-        // --- HÀM VẼ LỜI BÀI HÁT RA HTML ---
         function renderLyrics() {
             lyricsContainer.innerHTML = "";
-            lyricsContainer.style.transform = `translateY(80px)`; // Reset vị trí cuộn
+            activeLyricIndex = -1; // Reset dòng đang chạy
             
             if (currentLyricsData.length === 0) {
                 const p = document.createElement("p");
-                p.className = "lyric-line";
+                p.className = "lyric-line active";
                 p.textContent = "Chưa có lời bài hát...";
                 lyricsContainer.appendChild(p);
                 return;
@@ -343,21 +355,16 @@
             }
         }
 
-        // --- 4. HÀM CHUYỂN BÀI (TỚI/LÙI) ---
         function nextTrack() {
             currentTrackIndex++;
-            if (currentTrackIndex >= playlist.length) {
-                currentTrackIndex = 0;
-            }
+            if (currentTrackIndex >= playlist.length) currentTrackIndex = 0;
             loadTrack(currentTrackIndex);
             playAfterChange();
         }
 
         function prevTrack() {
             currentTrackIndex--;
-            if (currentTrackIndex < 0) {
-                currentTrackIndex = playlist.length - 1;
-            }
+            if (currentTrackIndex < 0) currentTrackIndex = playlist.length - 1;
             loadTrack(currentTrackIndex);
             playAfterChange();
         }
@@ -371,7 +378,6 @@
 
         music.addEventListener("ended", nextTrack);
 
-        // --- 5. ĐIỀU KHIỂN ÂM THANH, THANH THỜI GIAN & ĐỒNG BỘ LYRICS ---
         music.addEventListener("timeupdate", () => {
             if(!music.duration) return;
             const percent = (music.currentTime / music.duration) * 100;
@@ -382,7 +388,7 @@
             syncLyrics(music.currentTime);
         });
 
-        // --- HÀM XỬ LÝ CHẠY CHỮ ---
+        // --- XỬ LÝ LYRICS MỚI ---
         let activeLyricIndex = -1;
         function syncLyrics(time) {
             if (currentLyricsData.length === 0) return;
@@ -396,19 +402,25 @@
                 }
             }
 
-            if (newIndex !== activeLyricIndex && newIndex !== -1) {
+            if (newIndex !== activeLyricIndex) {
                 activeLyricIndex = newIndex;
                 
                 const allLines = document.querySelectorAll('.lyric-line');
-                allLines.forEach(line => line.classList.remove('active'));
-                
-                const currentLineEl = document.getElementById(`lyric-line-${activeLyricIndex}`);
-                if (currentLineEl) {
-                    currentLineEl.classList.add('active');
+                allLines.forEach((line, index) => {
+                    line.classList.remove('active', 'past');
                     
-                    const offsetTop = currentLineEl.offsetTop;
-                    const transformY = 80 - offsetTop; 
-                    lyricsContainer.style.transform = `translateY(${transformY}px)`;
+                    if (activeLyricIndex !== -1 && index < activeLyricIndex) {
+                        // Những câu đã hát xong -> mờ dần và trôi lên
+                        line.classList.add('past'); 
+                    }
+                });
+                
+                if (activeLyricIndex !== -1) {
+                    const currentLineEl = document.getElementById(`lyric-line-${activeLyricIndex}`);
+                    if (currentLineEl) {
+                        // Câu đang hát -> nổi rõ lên và ở chính giữa
+                        currentLineEl.classList.add('active');
+                    }
                 }
             }
         }
@@ -416,8 +428,7 @@
         progressSlider.addEventListener("input", function() {
             music.currentTime = (this.value / 100) * music.duration;
             this.style.background = `linear-gradient(to right, var(--accent-color) ${this.value}%, rgba(255, 255, 255, 0.1) ${this.value}%)`;
-            
-            activeLyricIndex = -1;
+            activeLyricIndex = -2; // Ép hàm syncLyrics chạy lại lập tức khi tua
         });
 
         volumeSlider.addEventListener("input", function() { music.volume = this.value; });
