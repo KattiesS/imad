@@ -105,21 +105,20 @@
         .social-link.discord:hover { color: #5865F2; filter: drop-shadow(0 0 10px #5865F2); transform: translateY(-3px) scale(1.1); }
         .social-link.tiktok:hover { color: #fe2c55; filter: drop-shadow(0 0 10px #fe2c55); transform: translateY(-3px) scale(1.1); }
 
-        /* LỜI BÀI HÁT (GÓC TRÊN BÊN PHẢI) - ĐÃ XÓA KHUNG KÍNH MỜ */
+        /* LỜI BÀI HÁT (GÓC TRÊN BÊN PHẢI) */
         #lyrics-box {
             position: absolute;
             top: 40px;
             right: 40px;
             z-index: 5;
-            background: transparent; /* Xóa nền trắng mờ */
-            backdrop-filter: none; /* Xóa hiệu ứng mờ background */
+            background: transparent;
+            backdrop-filter: none;
             -webkit-backdrop-filter: none;
-            border: none; /* Xóa tất cả viền kể cả viền xanh cũ để mất hẳn khung */
+            border: none;
             padding: 15px 25px;
-            min-width: 250px;
-            max-width: 400px;
+            max-width: 600px; /* Tăng nhẹ chiều rộng tối đa để chứa câu dài tốt hơn */
             min-height: 30px;
-            box-shadow: none; /* Xóa đổ bóng của khung */
+            box-shadow: none;
             opacity: 0;
             pointer-events: none;
             transition: opacity 1.5s ease, transform 1.5s ease;
@@ -132,8 +131,9 @@
             font-size: 16px;
             font-weight: 500;
             line-height: 1.5;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.9); /* Tăng nhẹ shadow chữ để dễ đọc trên nền video */
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9);
             border-right: 2px solid transparent; 
+            white-space: nowrap; /* Bắt buộc lời bài hát luôn nằm trên 1 hàng không xuống dòng */
         }
 
         /* Hiệu ứng nháy con trỏ lúc đang đánh máy */
@@ -157,7 +157,7 @@
     </div>
 
     <div id="lyrics-box">
-        <div id="lyrics-content">Đang chờ phát nhạc...</div>
+        <div id="lyrics-content"></div>
     </div>
 
     <div id="track-info-box">
@@ -313,11 +313,8 @@
             clearInterval(typingInterval);
             lyricsContent.classList.remove("typing-cursor");
             
-            if (track.lyrics && track.lyrics.length > 0) {
-                lyricsContent.innerHTML = "Đang chờ phát nhạc...";
-            } else {
-                lyricsContent.innerHTML = "<i>(Chưa cập nhật lời bài hát)</i>";
-            }
+            // Đã xóa chữ "Đang chờ phát nhạc...", mặc định để trống khi load bài mới
+            lyricsContent.innerHTML = "";
         }
 
         loadTrack(currentTrackIndex);
