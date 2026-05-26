@@ -105,23 +105,21 @@
         .social-link.discord:hover { color: #5865F2; filter: drop-shadow(0 0 10px #5865F2); transform: translateY(-3px) scale(1.1); }
         .social-link.tiktok:hover { color: #fe2c55; filter: drop-shadow(0 0 10px #fe2c55); transform: translateY(-3px) scale(1.1); }
 
-        /* KHUNG LỜI BÀI HÁT (GÓC TRÊN BÊN PHẢI) */
+        /* LỜI BÀI HÁT (GÓC TRÊN BÊN PHẢI) - ĐÃ XÓA KHUNG KÍNH MỜ */
         #lyrics-box {
             position: absolute;
             top: 40px;
             right: 40px;
             z-index: 5;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-right: 4px solid #00ffcc; /* Viền xanh neon */
-            border-radius: 8px;
+            background: transparent; /* Xóa nền trắng mờ */
+            backdrop-filter: none; /* Xóa hiệu ứng mờ background */
+            -webkit-backdrop-filter: none;
+            border: none; /* Xóa tất cả viền kể cả viền xanh cũ để mất hẳn khung */
             padding: 15px 25px;
             min-width: 250px;
             max-width: 400px;
             min-height: 30px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            box-shadow: none; /* Xóa đổ bóng của khung */
             opacity: 0;
             pointer-events: none;
             transition: opacity 1.5s ease, transform 1.5s ease;
@@ -134,8 +132,7 @@
             font-size: 16px;
             font-weight: 500;
             line-height: 1.5;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
-            /* Dấu nháy (cursor) giả lập đánh máy */
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9); /* Tăng nhẹ shadow chữ để dễ đọc trên nền video */
             border-right: 2px solid transparent; 
         }
 
@@ -215,12 +212,6 @@
 
     <script>
         // --- 1. DỮ LIỆU DANH SÁCH BÀI HÁT & LỜI BÀI HÁT ---
-        // --- HƯỚNG DẪN NHẬP LỜI BÀI HÁT ---
-        // `time` là số giây bài hát bắt đầu hát câu đó (ví dụ: 1 phút 15 giây thì time: 75.0)
-        // `text` là lời bài hát tương ứng. Nếu muốn tạo khoảng nghỉ, gán `text: ""`
-        
-       // --- 1. DỮ LIỆU DANH SÁCH BÀI HÁT & LỜI BÀI HÁT ---
-        // Bạn có thể tự do thay đổi thông số 'time' (tính bằng giây) để chữ chạy khớp với nhạc.
         const playlist = [
             {
                 title: "『 HIDE AND SEEK 』",
@@ -229,7 +220,6 @@
                 video: "marin1.mp4",
                 disc: "disc.jpg",
                 lyrics: [
-                    
                     { time: 1.0, text: "Yeah, it was nice to meet you and everything" },
                     { time: 4.0, text: "But there are some things you should know" },
                     { time: 6.5, text: "I'm not like those other girls you're used to" },
@@ -288,8 +278,8 @@
         ];
 
         let currentTrackIndex = 0; 
-        let currentLyricIndex = -1; // Theo dõi câu hát hiện tại
-        let typingInterval; // Dùng để quản lý tốc độ gõ chữ
+        let currentLyricIndex = -1; 
+        let typingInterval; 
 
         // --- 2. KẾT NỐI VỚI CÁC PHẦN TỬ HTML ---
         const music = document.getElementById("bg-music");
@@ -319,7 +309,6 @@
             trackTitleEl.textContent = track.title;
             trackArtistEl.textContent = track.artist;
             
-            // Reset Lời bài hát
             currentLyricIndex = -1;
             clearInterval(typingInterval);
             lyricsContent.classList.remove("typing-cursor");
@@ -338,7 +327,6 @@
             video.style.filter = "blur(0px)";
             overlay.style.opacity = "0";
             
-            // Hiện các cụm Box
             playerWrapper.style.opacity = "1"; 
             playerWrapper.style.pointerEvents = "auto";
             
@@ -350,7 +338,6 @@
             socialLinksBox.style.pointerEvents = "auto";
             socialLinksBox.style.transform = "translateY(0)";
 
-            // Hiện Khung Lời bài hát
             lyricsBox.style.opacity = "1";
             lyricsBox.style.transform = "translateY(0)";
 
@@ -397,19 +384,18 @@
             clearInterval(typingInterval);
             lyricsContent.innerHTML = "";
             
-            if (!text) return; // Nếu khoảng nghỉ thì để trống
+            if (!text) return; 
             
             lyricsContent.classList.add("typing-cursor");
             let i = 0;
             
-            // Tốc độ gõ 45ms/chữ (Bạn có thể tăng giảm cho vừa ý)
             typingInterval = setInterval(() => {
                 if (i < text.length) {
                     lyricsContent.innerHTML += text.charAt(i);
                     i++;
                 } else {
                     clearInterval(typingInterval);
-                    lyricsContent.classList.remove("typing-cursor"); // Tắt nháy con trỏ khi gõ xong
+                    lyricsContent.classList.remove("typing-cursor"); 
                 }
             }, 45); 
         }
@@ -418,7 +404,6 @@
         music.addEventListener("timeupdate", () => {
             if(!music.duration) return;
             
-            // Cập nhật thanh tiến trình
             const percent = (music.currentTime / music.duration) * 100;
             progressSlider.value = percent;
             currentTimeEl.textContent = formatTime(music.currentTime);
@@ -428,7 +413,6 @@
             const trackLyrics = playlist[currentTrackIndex].lyrics;
             if (trackLyrics && trackLyrics.length > 0) {
                 let activeIndex = -1;
-                // Tìm câu hát có thời gian <= thời gian hiện tại
                 for (let i = 0; i < trackLyrics.length; i++) {
                     if (music.currentTime >= trackLyrics[i].time) {
                         activeIndex = i;
@@ -437,7 +421,6 @@
                     }
                 }
                 
-                // Nếu đổi sang câu mới thì chạy hiệu ứng gõ chữ
                 if (activeIndex !== currentLyricIndex && activeIndex >= 0) {
                     currentLyricIndex = activeIndex;
                     renderTypingEffect(trackLyrics[activeIndex].text);
@@ -445,12 +428,9 @@
             }
         });
 
-        // Khi người dùng tua thanh nhạc (kéo thanh thời gian)
         progressSlider.addEventListener("input", function() {
             music.currentTime = (this.value / 100) * music.duration;
             this.style.background = `linear-gradient(to right, var(--accent-color) ${this.value}%, rgba(255, 255, 255, 0.1) ${this.value}%)`;
-            
-            // Khi tua nhạc, cần reset lại currentLyricIndex để nó tính toán và gõ lại đúng câu hiện tại
             currentLyricIndex = -1; 
         });
 
