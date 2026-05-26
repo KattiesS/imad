@@ -1,746 +1,462 @@
 <!DOCTYPE html>
-
 <html lang="vi">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>imad</title>
-
-    <link rel="icon" href="tomato.png" type="image/png">
-
-    <style>
-
-        :root {
-
-            --accent-color: #ff007f;
-
-            --secondary-color: #ffaa00;
-
-            --bg-overlay: rgba(0, 0, 0, 0.6);
-
-        }
-
-
-
-        @keyframes spin {
-
-            from { transform: rotate(0deg); }
-
-            to { transform: rotate(360deg); }
-
-        }
-
-
-
-        @keyframes tiltRock {
-
-            0% { transform: rotateX(15deg) rotateY(-15deg); }
-
-            50% { transform: rotateX(10deg) rotateY(15deg); }
-
-            100% { transform: rotateX(15deg) rotateY(-15deg); }
-
-        }
-
-
-
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #050505; font-family: 'Segoe UI', sans-serif; }
-
-        
-
-        #bg-video { width: 100%; height: 100%; object-fit: cover; transform: scale(1.1); filter: blur(25px); transition: filter 1.5s ease; }
-
-
-
-        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-overlay); display: flex; justify-content: center; align-items: center; z-index: 10; transition: opacity 1s ease; }
-
-
-
-        #play-btn { background: transparent; border: 2px solid var(--accent-color); border-radius: 50%; width: 80px; height: 80px; color: var(--accent-color); font-size: 30px; cursor: pointer; box-shadow: 0 0 15px var(--accent-color); transition: 0.3s; }
-
-        #play-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 30px var(--accent-color); }
-
-
-
-        #player-wrapper { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: 750px; max-width: 95%; z-index: 5; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
-
-
-
-        .controls-row { display: flex; align-items: center; gap: 50px; margin-bottom: 30px; }
-
-
-
-        .disc-container {
-
-            perspective: 1000px;
-
-            perspective-origin: center;
-
-            transition: transform 0.5s ease;
-
-        }
-
-
-
-        .disc-container:hover {
-
-            animation: tiltRock 2.5s ease-in-out infinite;
-
-        }
-
-
-
-        #disc-img {
-
-            width: 180px; height: 180px; border-radius: 50%;
-
-            border: 5px solid rgba(255,255,255,0.2);
-
-            cursor: pointer; transition: box-shadow 0.3s;
-
-            box-shadow: 0 0 25px rgba(255,255,255,0.3);
-
-            object-fit: cover;
-
-            animation: spin 4s linear infinite;
-
-            animation-play-state: paused;
-
-            display: block;
-
-        }
-
-        
-
-        .is-spinning {
-
-            animation-play-state: running !important;
-
-        }
-
-        
-
-        .skip-icon { width: 35px; height: 35px; fill: #aaa; cursor: pointer; transition: 0.3s; }
-
-        .skip-icon:hover { fill: var(--accent-color); }
-
-
-
-        input[type="range"] { -webkit-appearance: none; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; cursor: pointer; }
-
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: white; border-radius: 50%; opacity: 0; transition: 0.2s; }
-
-        #player-wrapper:hover input[type="range"]::-webkit-slider-thumb { opacity: 1; }
-
-
-
-        .time-text { color: white; font-size: 12px; min-width: 35px; text-align: center; }
-
-        .speaker-icon { width: 24px; height: 24px; fill: none; stroke: #aaa; stroke-width: 2; transition: 0.3s; }
-
-        #volume-wrapper:hover .speaker-icon { stroke: var(--secondary-color); }
-
-        #volume-slider-container { width: 0; overflow: hidden; transition: 0.4s; }
-
-        #volume-wrapper:hover #volume-slider-container { width: 100px; margin-left: 10px; }
-
-        #volume-slider { width: 100px; }
-
-
-
-        /* KHUNG KÍNH MỜ GÓC TRÁI DƯỚI (INFO BÀI HÁT) */
-
-        #track-info-box {
-
-            position: absolute;
-
-            bottom: 30px;
-
-            left: 40px;
-
-            z-index: 5;
-
-            background: rgba(255, 255, 255, 0.05);
-
-            backdrop-filter: blur(12px);
-
-            -webkit-backdrop-filter: blur(12px);
-
-            border: 1px solid rgba(255, 255, 255, 0.1);
-
-            border-left: 4px solid var(--accent-color);
-
-            border-radius: 8px;
-
-            padding: 15px 25px;
-
-            min-width: 200px;
-
-            max-width: 300px;
-
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-
-            opacity: 0;
-
-            pointer-events: none;
-
-            transition: opacity 1.5s ease, transform 1.5s ease;
-
-            transform: translateY(10px);
-
-        }
-
-        .track-title {
-
-            color: #fff;
-
-            font-size: 16px;
-
-            font-weight: 600;
-
-            margin: 0 0 5px 0;
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-
-            letter-spacing: 0.5px;
-
-        }
-
-        .track-artist {
-
-            color: rgba(255, 255, 255, 0.6);
-
-            font-size: 13px;
-
-            margin: 0;
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-
-        }
-
-
-
-        /* KHUNG KÍNH MỜ GÓC PHẢI DƯỚI (MẠNG XÃ HỘI) */
-
-        #social-links-box {
-
-            position: absolute;
-
-            bottom: 30px;
-
-            right: 40px;
-
-            z-index: 5;
-
-            background: rgba(255, 255, 255, 0.05);
-
-            backdrop-filter: blur(12px);
-
-            -webkit-backdrop-filter: blur(12px);
-
-            border: 1px solid rgba(255, 255, 255, 0.1);
-
-            border-right: 4px solid var(--secondary-color); /* Vạch neon màu cam ở bên phải */
-
-            border-radius: 8px;
-
-            padding: 15px 25px;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 20px;
-
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-
-            opacity: 0;
-
-            pointer-events: none;
-
-            transition: opacity 1.5s ease, transform 1.5s ease;
-
-            transform: translateY(10px);
-
-        }
-
-
-
-        .social-link {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            width: 26px;
-
-            height: 26px;
-
-            color: rgba(255, 255, 255, 0.7);
-
-            text-decoration: none;
-
-            transition: all 0.3s ease;
-
-        }
-
-        .social-link svg {
-
-            width: 100%;
-
-            height: 100%;
-
-            fill: currentColor;
-
-        }
-
-        
-
-        /* Hiệu ứng di chuột vào từng Icon */
-
-        .social-link.youtube:hover { color: #ff0000; filter: drop-shadow(0 0 10px #ff0000); transform: translateY(-3px) scale(1.1); }
-
-        .social-link.steam:hover { color: #00adee; filter: drop-shadow(0 0 10px #00adee); transform: translateY(-3px) scale(1.1); }
-
-        .social-link.spotify:hover { color: #1db954; filter: drop-shadow(0 0 10px #1db954); transform: translateY(-3px) scale(1.1); }
-
-        .social-link.discord:hover { color: #5865F2; filter: drop-shadow(0 0 10px #5865F2); transform: translateY(-3px) scale(1.1); }
-
-        .social-link.tiktok:hover { color: #fe2c55; filter: drop-shadow(0 0 10px #fe2c55); transform: translateY(-3px) scale(1.1); }
-
-    </style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>imad</title>
+    <link rel="icon" href="tomato.png" type="image/png">
+    <style>
+        :root {
+            --accent-color: #ff007f;
+            --secondary-color: #ffaa00;
+            --bg-overlay: rgba(0, 0, 0, 0.6);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes tiltRock {
+            0% { transform: rotateX(15deg) rotateY(-15deg); }
+            50% { transform: rotateX(10deg) rotateY(15deg); }
+            100% { transform: rotateX(15deg) rotateY(-15deg); }
+        }
+
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #050505; font-family: 'Segoe UI', sans-serif; }
+        
+        #bg-video { width: 100%; height: 100%; object-fit: cover; transform: scale(1.1); filter: blur(25px); transition: filter 1.5s ease; }
+
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-overlay); display: flex; justify-content: center; align-items: center; z-index: 10; transition: opacity 1s ease; }
+
+        #play-btn { background: transparent; border: 2px solid var(--accent-color); border-radius: 50%; width: 80px; height: 80px; color: var(--accent-color); font-size: 30px; cursor: pointer; box-shadow: 0 0 15px var(--accent-color); transition: 0.3s; }
+        #play-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 30px var(--accent-color); }
+
+        #player-wrapper { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: 750px; max-width: 95%; z-index: 5; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
+
+        .controls-row { display: flex; align-items: center; gap: 50px; margin-bottom: 30px; }
+
+        .disc-container {
+            perspective: 1000px;
+            perspective-origin: center;
+            transition: transform 0.5s ease;
+        }
+
+        .disc-container:hover {
+            animation: tiltRock 2.5s ease-in-out infinite;
+        }
+
+        #disc-img {
+            width: 180px; height: 180px; border-radius: 50%;
+            border: 5px solid rgba(255,255,255,0.2);
+            cursor: pointer; transition: box-shadow 0.3s;
+            box-shadow: 0 0 25px rgba(255,255,255,0.3);
+            object-fit: cover;
+            animation: spin 4s linear infinite;
+            animation-play-state: paused;
+            display: block;
+        }
+        
+        .is-spinning {
+            animation-play-state: running !important;
+        }
+        
+        .skip-icon { width: 35px; height: 35px; fill: #aaa; cursor: pointer; transition: 0.3s; }
+        .skip-icon:hover { fill: var(--accent-color); }
+
+        input[type="range"] { -webkit-appearance: none; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; cursor: pointer; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: white; border-radius: 50%; opacity: 0; transition: 0.2s; }
+        #player-wrapper:hover input[type="range"]::-webkit-slider-thumb { opacity: 1; }
+
+        .time-text { color: white; font-size: 12px; min-width: 35px; text-align: center; }
+        .speaker-icon { width: 24px; height: 24px; fill: none; stroke: #aaa; stroke-width: 2; transition: 0.3s; }
+        #volume-wrapper:hover .speaker-icon { stroke: var(--secondary-color); }
+        #volume-slider-container { width: 0; overflow: hidden; transition: 0.4s; }
+        #volume-wrapper:hover #volume-slider-container { width: 100px; margin-left: 10px; }
+        #volume-slider { width: 100px; }
+
+        /* KHUNG KÍNH MỜ GÓC TRÁI DƯỚI (INFO BÀI HÁT) */
+        #track-info-box {
+            position: absolute; bottom: 30px; left: 40px; z-index: 5;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid var(--accent-color); border-radius: 8px;
+            padding: 15px 25px; min-width: 200px; max-width: 300px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); opacity: 0; pointer-events: none;
+            transition: opacity 1.5s ease, transform 1.5s ease; transform: translateY(10px);
+        }
+        .track-title { color: #fff; font-size: 16px; font-weight: 600; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
+        .track-artist { color: rgba(255, 255, 255, 0.6); font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* KHUNG KÍNH MỜ GÓC PHẢI DƯỚI (MẠNG XÃ HỘI) */
+        #social-links-box {
+            position: absolute; bottom: 30px; right: 40px; z-index: 5;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-right: 4px solid var(--secondary-color); border-radius: 8px;
+            padding: 15px 25px; display: flex; align-items: center; gap: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); opacity: 0; pointer-events: none;
+            transition: opacity 1.5s ease, transform 1.5s ease; transform: translateY(10px);
+        }
+
+        .social-link { display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: all 0.3s ease; }
+        .social-link svg { width: 100%; height: 100%; fill: currentColor; }
+        .social-link.youtube:hover { color: #ff0000; filter: drop-shadow(0 0 10px #ff0000); transform: translateY(-3px) scale(1.1); }
+        .social-link.steam:hover { color: #00adee; filter: drop-shadow(0 0 10px #00adee); transform: translateY(-3px) scale(1.1); }
+        .social-link.spotify:hover { color: #1db954; filter: drop-shadow(0 0 10px #1db954); transform: translateY(-3px) scale(1.1); }
+        .social-link.discord:hover { color: #5865F2; filter: drop-shadow(0 0 10px #5865F2); transform: translateY(-3px) scale(1.1); }
+        .social-link.tiktok:hover { color: #fe2c55; filter: drop-shadow(0 0 10px #fe2c55); transform: translateY(-3px) scale(1.1); }
+
+        /* KHUNG LỜI BÀI HÁT (GÓC TRÊN BÊN PHẢI) */
+        #lyrics-box {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 4px solid #00ffcc; /* Viền xanh neon */
+            border-radius: 8px;
+            padding: 15px 25px;
+            min-width: 250px;
+            max-width: 400px;
+            min-height: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease, transform 1.5s ease;
+            transform: translateY(-10px);
+            text-align: right;
+        }
+
+        #lyrics-content {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.5;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+            /* Dấu nháy (cursor) giả lập đánh máy */
+            border-right: 2px solid transparent; 
+        }
+
+        /* Hiệu ứng nháy con trỏ lúc đang đánh máy */
+        .typing-cursor {
+            animation: blink 0.7s infinite;
+            border-right: 2px solid #00ffcc !important;
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent !important; }
+        }
+    </style>
 </head>
-
 <body>
 
-
-
-    <video id="bg-video" autoplay loop muted playsinline></video>
-
-    <audio id="bg-music"></audio>
-
-
-
-    <div id="overlay">
-
-        <button id="play-btn" onclick="startExperience()">▶</button>
-
-    </div>
-
-
-
-    <!-- KHUNG KÍNH MỜ THÔNG TIN BÀI HÁT (TRÁI) -->
-
-    <div id="track-info-box">
-
-        <p class="track-title" id="track-title">Loading...</p>
-
-        <p class="track-artist" id="track-artist">Loading...</p>
-
-    </div>
-
-
-
-    <!-- KHUNG KÍNH MỜ MẠNG XÃ HỘI (PHẢI) -->
-
-    <div id="social-links-box">
-
-        <a href="https://www.youtube.com/@KattiesS_07" target="_blank" class="social-link youtube" title="YouTube">
-
-            <svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
-
-        </a>
-
-        <a href="https://steamcommunity.com/id/KattiesS" target="_blank" class="social-link steam" title="Steam">
-
-            <svg viewBox="0 0 24 24"><path d="M11.979 0C5.353 0 0 5.373 0 12c0 2.222.604 4.3 1.65 6.096l3.551-5.127c-.035-.205-.058-.415-.058-.631 0-2.381 1.93-4.311 4.311-4.311 2.38 0 4.31 1.93 4.31 4.311 0 2.38-1.93 4.31-4.31 4.31-.212 0-.42-.022-.62-.056l-5.115 3.56c1.802 1.05 3.882 1.655 6.115 1.655 6.626 0 12-5.373 12-12S18.605 0 11.979 0zm-2.483 14.502c-1.341 0-2.43-1.089-2.43-2.43s1.089-2.43 2.43-2.43 2.43 1.089 2.43 2.43-1.089 2.43-2.43 2.43zm2.483-3.79c-.748 0-1.353.605-1.353 1.353 0 .748.605 1.353 1.353 1.353.748 0 1.353-.605 1.353-1.353 0-.748-.605-1.353-1.353-1.353zm4.512-5.694c-1.144 0-2.072.928-2.072 2.072 0 1.144.928 2.072 2.072 2.072 1.144 0 2.072-.928 2.072-2.072 0-1.144-.928-2.072-2.072-2.072zm0 3.195c-.62 0-1.123-.503-1.123-1.123 0-.62.503-1.123 1.123-1.123.62 0 1.123.503 1.123 1.123 0 .62-.503 1.123-1.123 1.123z"/></svg>
-
-        </a>
-
-        <a href="https://open.spotify.com/user/313kjeqjzqelsgtm4khbpbsr6lme?si=57ac507679dd457b" target="_blank" class="social-link spotify" title="Spotify">
-
-            <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.54-1.02.72-1.56.3z"/></svg>
-
-        </a>
-
-        <a href="https://www.discord.com/users/600683647443533854" target="_blank" class="social-link discord" title="Discord">
-
-            <svg viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
-
-        </a>
-
-        <!-- Thêm link TikTok ở đây (Bạn nhớ thay đổi ID @KattiesS thành ID chuẩn nếu cần nhé) -->
-
-        <a href="https://www.tiktok.com/@kattiess__?is_from_webapp=1&sender_device=pc" target="_blank" class="social-link tiktok" title="TikTok">
-
-            <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.23-1.13 4.54-2.91 5.92-1.76 1.41-4.21 1.9-6.39 1.34-2.19-.55-3.99-2.07-4.88-4.09-.89-2.02-.75-4.5.39-6.39 1.13-1.89 3.09-3.15 5.25-3.41.4-.04.8-.04 1.19-.04v4.03c-.22.02-.45.02-.68.04-1.29.13-2.58.85-3.23 1.96-.65 1.12-.66 2.58-.08 3.73.57 1.15 1.76 1.92 3.04 2.11 1.28.18 2.66-.08 3.66-.88 1.01-.81 1.63-2.11 1.65-3.41.05-6.66.02-13.33.02-20z"/></svg>
-
-        </a>
-
-    </div>
-
-
-
-    <div id="player-wrapper">
-
-        <div class="controls-row">
-
-            <svg class="skip-icon" viewBox="0 0 24 24" onclick="prevTrack()"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-
-            
-
-            <div class="disc-container">
-
-                <img id="disc-img" src="disc.jpg" onclick="togglePlayPause()" alt="Vinyl Record">
-
-            </div>
-
-            
-
-            <svg class="skip-icon" viewBox="0 0 24 24" onclick="nextTrack()"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-
-        </div>
-
-        
-
-        <div class="bottom-bar" style="display:flex; align-items:center; width:100%;">
-
-            <div style="width:140px;"></div>
-
-            <div class="progress-row" style="flex-grow:1; display:flex; align-items:center; gap:15px; padding:0 15px;">
-
-                <span id="current-time" class="time-text">0:00</span>
-
-                <input type="range" id="progress-slider" min="0" max="100" value="0" style="flex-grow:1;">
-
-                <span id="total-time" class="time-text">0:00</span>
-
-            </div>
-
-            <div id="volume-wrapper" style="width:140px; display:flex; align-items:center;">
-
-                <svg class="speaker-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-
-                <div id="volume-slider-container">
-
-                    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-
-    <script>
-
-        // --- 1. DỮ LIỆU DANH SÁCH BÀI HÁT (PLAYLIST) ---
-
-        const playlist = [
-
-            {
-
-                title: "『 HIDE AND SEEK 』",
-
-                artist: "i-dle",
-
-                audio: "nhac.mp3",
-
-                video: "marin1.mp4",
-
-                disc: "disc.jpg"
-
-            },
-
-            {
-
-                title: "『 veil 』",
-
-                artist: "Keina Suda",
-
-                audio: "nhac2.mp3",  
-
-                video: "marin1.mp4", 
-
-                disc: "disc2.jpg"
-
-            },
-
-            {
-
-                title: "『 Fukashigi no Karte 』",
-
-                artist: "Various Voice Actors",
-
-                audio: "nhac3.mp3",
-
-                video: "marin1.mp4",
-
-                disc: "disc3.jpg"
-
-            },
-
-            {
-
-            title: " 『 Shake Na Baby 』 ",
-
-            artist: "AKASAKI",
-
-            audio: "nhac4.mp3",
-
-            video: "marin2.mp4",
-
-            disc: "disc4.jpg"
-
-            }
-
-            
-
-        ];
-
-
-
-        let currentTrackIndex = 0; // Vị trí bài hát đang phát
-
-
-
-        // --- 2. KẾT NỐI VỚI CÁC PHẦN TỬ HTML ---
-
-        const music = document.getElementById("bg-music");
-
-        const video = document.getElementById("bg-video");
-
-        const discImg = document.getElementById("disc-img");
-
-        const trackTitleEl = document.getElementById("track-title");
-
-        const trackArtistEl = document.getElementById("track-artist");
-
-
-
-        const overlay = document.getElementById("overlay");
-
-        const playerWrapper = document.getElementById("player-wrapper");
-
-        const progressSlider = document.getElementById("progress-slider");
-
-        const volumeSlider = document.getElementById("volume-slider");
-
-        const currentTimeEl = document.getElementById("current-time");
-
-        const totalTimeEl = document.getElementById("total-time");
-
-        const trackInfoBox = document.getElementById("track-info-box");
-
-        const socialLinksBox = document.getElementById("social-links-box"); // Kết nối tới Khung MXH
-
-
-
-        // --- 3. HÀM TẢI BÀI HÁT THEO INDEX ---
-
-        function loadTrack(index) {
-
-            const track = playlist[index];
-
-            music.src = track.audio;
-
-            video.src = track.video;
-
-            discImg.src = track.disc;
-
-            trackTitleEl.textContent = track.title;
-
-            trackArtistEl.textContent = track.artist;
-
-        }
-
-
-
-        // Tải bài hát đầu tiên ngay khi mở web
-
-        loadTrack(currentTrackIndex);
-
-
-
-        function startExperience() {
-
-            music.play();
-
-            video.style.filter = "blur(0px)";
-
-            overlay.style.opacity = "0";
-
-            
-
-            // Hiện cụm Play List
-
-            playerWrapper.style.opacity = "1"; 
-
-            playerWrapper.style.pointerEvents = "auto";
-
-            
-
-            // Hiện khung thông tin bài hát (Trái)
-
-            trackInfoBox.style.opacity = "1";
-
-            trackInfoBox.style.pointerEvents = "auto";
-
-            trackInfoBox.style.transform = "translateY(0)";
-
-
-
-            // Hiện khung MXH (Phải)
-
-            socialLinksBox.style.opacity = "1";
-
-            socialLinksBox.style.pointerEvents = "auto";
-
-            socialLinksBox.style.transform = "translateY(0)";
-
-
-
-            discImg.classList.add("is-spinning");
-
-            setTimeout(() => overlay.style.display = "none", 1000);
-
-        }
-
-
-
-        function togglePlayPause() {
-
-            if (music.paused) { 
-
-                music.play(); 
-
-                discImg.classList.add("is-spinning"); 
-
-            } else { 
-
-                music.pause(); 
-
-                discImg.classList.remove("is-spinning"); 
-
-            }
-
-        }
-
-
-
-        // --- 4. HÀM CHUYỂN BÀI (TỚI/LÙI) ---
-
-        function nextTrack() {
-
-            currentTrackIndex++;
-
-            if (currentTrackIndex >= playlist.length) {
-
-                currentTrackIndex = 0; // Quay lại bài đầu nếu hết danh sách
-
-            }
-
-            loadTrack(currentTrackIndex);
-
-            playAfterChange();
-
-        }
-
-
-
-        function prevTrack() {
-
-            currentTrackIndex--;
-
-            if (currentTrackIndex < 0) {
-
-                currentTrackIndex = playlist.length - 1; // Chuyển tới bài cuối nếu lùi từ bài đầu
-
-            }
-
-            loadTrack(currentTrackIndex);
-
-            playAfterChange();
-
-        }
-
-
-
-        function playAfterChange() {
-
-            if (overlay.style.display === "none") {
-
-                music.play();
-
-                discImg.classList.add("is-spinning");
-
-            }
-
-        }
-
-
-
-        // TỰ ĐỘNG CHUYỂN BÀI KHI BÀI HIỆN TẠI KẾT THÚC
-
-        music.addEventListener("ended", nextTrack);
-
-
-
-        // --- 5. ĐIỀU KHIỂN ÂM THANH & THANH THỜI GIAN ---
-
-        music.addEventListener("timeupdate", () => {
-
-            if(!music.duration) return;
-
-            const percent = (music.currentTime / music.duration) * 100;
-
-            progressSlider.value = percent;
-
-            currentTimeEl.textContent = formatTime(music.currentTime);
-
-            progressSlider.style.background = `linear-gradient(to right, var(--accent-color) ${percent}%, rgba(255, 255, 255, 0.1) ${percent}%)`;
-
-        });
-
-
-
-        progressSlider.addEventListener("input", function() {
-
-            music.currentTime = (this.value / 100) * music.duration;
-
-            this.style.background = `linear-gradient(to right, var(--accent-color) ${this.value}%, rgba(255, 255, 255, 0.1) ${this.value}%)`;
-
-        });
-
-
-
-        volumeSlider.addEventListener("input", function() { music.volume = this.value; });
-
-        function formatTime(s) { let m = Math.floor(s/60); let sec = Math.floor(s%60); return `${m}:${sec < 10 ? '0'+sec : sec}`; }
-
-        music.addEventListener("loadedmetadata", () => totalTimeEl.textContent = formatTime(music.duration));
-
-    </script>
-
+    <video id="bg-video" autoplay loop muted playsinline></video>
+    <audio id="bg-music"></audio>
+
+    <div id="overlay">
+        <button id="play-btn" onclick="startExperience()">▶</button>
+    </div>
+
+    <div id="lyrics-box">
+        <div id="lyrics-content">Đang chờ phát nhạc...</div>
+    </div>
+
+    <div id="track-info-box">
+        <p class="track-title" id="track-title">Loading...</p>
+        <p class="track-artist" id="track-artist">Loading...</p>
+    </div>
+
+    <div id="social-links-box">
+        <a href="https://www.youtube.com/@KattiesS_07" target="_blank" class="social-link youtube" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+        </a>
+        <a href="https://steamcommunity.com/id/KattiesS" target="_blank" class="social-link steam" title="Steam">
+            <svg viewBox="0 0 24 24"><path d="M11.979 0C5.353 0 0 5.373 0 12c0 2.222.604 4.3 1.65 6.096l3.551-5.127c-.035-.205-.058-.415-.058-.631 0-2.381 1.93-4.311 4.311-4.311 2.38 0 4.31 1.93 4.31 4.311 0 2.38-1.93 4.31-4.31 4.31-.212 0-.42-.022-.62-.056l-5.115 3.56c1.802 1.05 3.882 1.655 6.115 1.655 6.626 0 12-5.373 12-12S18.605 0 11.979 0zm-2.483 14.502c-1.341 0-2.43-1.089-2.43-2.43s1.089-2.43 2.43-2.43 2.43 1.089 2.43 2.43-1.089 2.43-2.43 2.43zm2.483-3.79c-.748 0-1.353.605-1.353 1.353 0 .748.605 1.353 1.353 1.353.748 0 1.353-.605 1.353-1.353 0-.748-.605-1.353-1.353-1.353zm4.512-5.694c-1.144 0-2.072.928-2.072 2.072 0 1.144.928 2.072 2.072 2.072 1.144 0 2.072-.928 2.072-2.072 0-1.144-.928-2.072-2.072-2.072zm0 3.195c-.62 0-1.123-.503-1.123-1.123 0-.62.503-1.123 1.123-1.123.62 0 1.123.503 1.123 1.123 0 .62-.503 1.123-1.123 1.123z"/></svg>
+        </a>
+        <a href="https://open.spotify.com/user/313kjeqjzqelsgtm4khbpbsr6lme?si=57ac507679dd457b" target="_blank" class="social-link spotify" title="Spotify">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.54-1.02.72-1.56.3z"/></svg>
+        </a>
+        <a href="https://www.discord.com/users/600683647443533854" target="_blank" class="social-link discord" title="Discord">
+            <svg viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@kattiess__?is_from_webapp=1&sender_device=pc" target="_blank" class="social-link tiktok" title="TikTok">
+            <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.23-1.13 4.54-2.91 5.92-1.76 1.41-4.21 1.9-6.39 1.34-2.19-.55-3.99-2.07-4.88-4.09-.89-2.02-.75-4.5.39-6.39 1.13-1.89 3.09-3.15 5.25-3.41.4-.04.8-.04 1.19-.04v4.03c-.22.02-.45.02-.68.04-1.29.13-2.58.85-3.23 1.96-.65 1.12-.66 2.58-.08 3.73.57 1.15 1.76 1.92 3.04 2.11 1.28.18 2.66-.08 3.66-.88 1.01-.81 1.63-2.11 1.65-3.41.05-6.66.02-13.33.02-20z"/></svg>
+        </a>
+    </div>
+
+    <div id="player-wrapper">
+        <div class="controls-row">
+            <svg class="skip-icon" viewBox="0 0 24 24" onclick="prevTrack()"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            
+            <div class="disc-container">
+                <img id="disc-img" src="disc.jpg" onclick="togglePlayPause()" alt="Vinyl Record">
+            </div>
+            
+            <svg class="skip-icon" viewBox="0 0 24 24" onclick="nextTrack()"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+        </div>
+        
+        <div class="bottom-bar" style="display:flex; align-items:center; width:100%;">
+            <div style="width:140px;"></div>
+            <div class="progress-row" style="flex-grow:1; display:flex; align-items:center; gap:15px; padding:0 15px;">
+                <span id="current-time" class="time-text">0:00</span>
+                <input type="range" id="progress-slider" min="0" max="100" value="0" style="flex-grow:1;">
+                <span id="total-time" class="time-text">0:00</span>
+            </div>
+            <div id="volume-wrapper" style="width:140px; display:flex; align-items:center;">
+                <svg class="speaker-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                <div id="volume-slider-container">
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. DỮ LIỆU DANH SÁCH BÀI HÁT & LỜI BÀI HÁT ---
+        // --- HƯỚNG DẪN NHẬP LỜI BÀI HÁT ---
+        // `time` là số giây bài hát bắt đầu hát câu đó (ví dụ: 1 phút 15 giây thì time: 75.0)
+        // `text` là lời bài hát tương ứng. Nếu muốn tạo khoảng nghỉ, gán `text: ""`
+        
+       // --- 1. DỮ LIỆU DANH SÁCH BÀI HÁT & LỜI BÀI HÁT ---
+        // Bạn có thể tự do thay đổi thông số 'time' (tính bằng giây) để chữ chạy khớp với nhạc.
+        const playlist = [
+            {
+                title: "『 HIDE AND SEEK 』",
+                artist: "i-dle",
+                audio: "nhac.mp3",
+                video: "marin1.mp4",
+                disc: "disc.jpg",
+                lyrics: [
+                    { time: 0.0, text: "🎵 HIDE AND SEEK 🎵" },
+                    { time: 2.0, text: "Yeah, it was nice to meet you and everything" },
+                    { time: 5.5, text: "But there are some things you should know" },
+                    { time: 9.0, text: "I'm not like those other girls you're used to" },
+                    { time: 12.5, text: "If you think you have what it takes, then I'll be right here" },
+                    { time: 18.0, text: "I've been all alone, for, oh, so long" },
+                    { time: 22.0, text: "Think I'm better off just on my own (Oh)" },
+                    { time: 26.0, text: "When you're looking for love, it's always hiding away" },
+                    { time: 30.0, text: "I know how boys just love to play their games" },
+                    { time: 34.0, text: "They say love is (Blind), 閉じない (Eyes)" },
+                    { time: 37.0, text: "握って (Tight), enjoy the (Ride)" },
+                    { time: 40.0, text: "I'm not (Easy), it's not (Hard)" },
+                    { time: 42.5, text: "Just give a (Girl) 全て (World)" },
+                    { time: 45.0, text: "何も言わなくても your eyes are saying" },
+                    { time: 48.5, text: "All that I need to know from you" },
+                    { time: 52.0, text: "I know all of the baggage and burdens you carry beside you" },
+                    { time: 56.5, text: "There's a beauty in taking a chance and letting it guide you" },
+                    { time: 61.0, text: "Look inside the crystal, there's no answers" },
+                    { time: 64.5, text: "No map, no guide (Follow what you're feeling)" },
+                    { time: 68.5, text: "No, I don't chase (Chase), I don't play hide and seek (Seek)" },
+                    { time: 73.0, text: "本気なら見せてよ come find me" },
+                    { time: 76.5, text: "\"Girl, be mine\" (Mine) なんて信じない" },
+                    { time: 80.0, text: "Gotta show me, boy, 秘密はナシだよ" },
+                    { time: 84.0, text: "Yesterday, the stars aligned our way (Way)" },
+                    { time: 88.0, text: "Today, I know I've been running around your brain (Brain)" },
+                    { time: 92.0, text: "I want roses, no red flags, gonna say, 'さよなら bye, bye' (Bye, bye)" },
+                    { time: 97.5, text: "I'm not afraid to throw it all away (Think twice about it)" }
+                ]
+            },
+            {
+                title: "『 veil 』",
+                artist: "Keina Suda",
+                audio: "nhac2.mp3",  
+                video: "marin1.mp4", 
+                disc: "disc2.jpg",
+                lyrics: [
+                    { time: 0.0, text: "🎵 Đang phát: veil 🎵" },
+                    { time: 5.0, text: "Ví dụ lời bài hát 2..." }
+                ]
+            },
+            {
+                title: "『 Fukashigi no Karte 』",
+                artist: "Various Voice Actors",
+                audio: "nhac3.mp3",
+                video: "marin1.mp4",
+                disc: "disc3.jpg",
+                lyrics: []
+            },
+            {
+                title: " 『 Shake Na Baby 』 ",
+                artist: "AKASAKI",
+                audio: "nhac4.mp3",
+                video: "marin2.mp4",
+                disc: "disc4.jpg",
+                lyrics: []
+            }
+        ];
+
+        let currentTrackIndex = 0; 
+        let currentLyricIndex = -1; // Theo dõi câu hát hiện tại
+        let typingInterval; // Dùng để quản lý tốc độ gõ chữ
+
+        // --- 2. KẾT NỐI VỚI CÁC PHẦN TỬ HTML ---
+        const music = document.getElementById("bg-music");
+        const video = document.getElementById("bg-video");
+        const discImg = document.getElementById("disc-img");
+        const trackTitleEl = document.getElementById("track-title");
+        const trackArtistEl = document.getElementById("track-artist");
+
+        const overlay = document.getElementById("overlay");
+        const playerWrapper = document.getElementById("player-wrapper");
+        const progressSlider = document.getElementById("progress-slider");
+        const volumeSlider = document.getElementById("volume-slider");
+        const currentTimeEl = document.getElementById("current-time");
+        const totalTimeEl = document.getElementById("total-time");
+        const trackInfoBox = document.getElementById("track-info-box");
+        const socialLinksBox = document.getElementById("social-links-box");
+        
+        const lyricsBox = document.getElementById("lyrics-box");
+        const lyricsContent = document.getElementById("lyrics-content");
+
+        // --- 3. HÀM TẢI BÀI HÁT THEO INDEX ---
+        function loadTrack(index) {
+            const track = playlist[index];
+            music.src = track.audio;
+            video.src = track.video;
+            discImg.src = track.disc;
+            trackTitleEl.textContent = track.title;
+            trackArtistEl.textContent = track.artist;
+            
+            // Reset Lời bài hát
+            currentLyricIndex = -1;
+            clearInterval(typingInterval);
+            lyricsContent.classList.remove("typing-cursor");
+            
+            if (track.lyrics && track.lyrics.length > 0) {
+                lyricsContent.innerHTML = "Đang chờ phát nhạc...";
+            } else {
+                lyricsContent.innerHTML = "<i>(Chưa cập nhật lời bài hát)</i>";
+            }
+        }
+
+        loadTrack(currentTrackIndex);
+
+        function startExperience() {
+            music.play();
+            video.style.filter = "blur(0px)";
+            overlay.style.opacity = "0";
+            
+            // Hiện các cụm Box
+            playerWrapper.style.opacity = "1"; 
+            playerWrapper.style.pointerEvents = "auto";
+            
+            trackInfoBox.style.opacity = "1";
+            trackInfoBox.style.pointerEvents = "auto";
+            trackInfoBox.style.transform = "translateY(0)";
+
+            socialLinksBox.style.opacity = "1";
+            socialLinksBox.style.pointerEvents = "auto";
+            socialLinksBox.style.transform = "translateY(0)";
+
+            // Hiện Khung Lời bài hát
+            lyricsBox.style.opacity = "1";
+            lyricsBox.style.transform = "translateY(0)";
+
+            discImg.classList.add("is-spinning");
+            setTimeout(() => overlay.style.display = "none", 1000);
+        }
+
+        function togglePlayPause() {
+            if (music.paused) { 
+                music.play(); 
+                discImg.classList.add("is-spinning"); 
+            } else { 
+                music.pause(); 
+                discImg.classList.remove("is-spinning"); 
+            }
+        }
+
+        // --- 4. HÀM CHUYỂN BÀI ---
+        function nextTrack() {
+            currentTrackIndex++;
+            if (currentTrackIndex >= playlist.length) { currentTrackIndex = 0; }
+            loadTrack(currentTrackIndex);
+            playAfterChange();
+        }
+
+        function prevTrack() {
+            currentTrackIndex--;
+            if (currentTrackIndex < 0) { currentTrackIndex = playlist.length - 1; }
+            loadTrack(currentTrackIndex);
+            playAfterChange();
+        }
+
+        function playAfterChange() {
+            if (overlay.style.display === "none") {
+                music.play();
+                discImg.classList.add("is-spinning");
+            }
+        }
+
+        music.addEventListener("ended", nextTrack);
+
+        // --- HÀM TẠO HIỆU ỨNG GÕ TỪNG CHỮ CHO LỜI BÀI HÁT ---
+        function renderTypingEffect(text) {
+            clearInterval(typingInterval);
+            lyricsContent.innerHTML = "";
+            
+            if (!text) return; // Nếu khoảng nghỉ thì để trống
+            
+            lyricsContent.classList.add("typing-cursor");
+            let i = 0;
+            
+            // Tốc độ gõ 45ms/chữ (Bạn có thể tăng giảm cho vừa ý)
+            typingInterval = setInterval(() => {
+                if (i < text.length) {
+                    lyricsContent.innerHTML += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typingInterval);
+                    lyricsContent.classList.remove("typing-cursor"); // Tắt nháy con trỏ khi gõ xong
+                }
+            }, 45); 
+        }
+
+        // --- 5. ĐIỀU KHIỂN ÂM THANH & THANH THỜI GIAN VÀ KIỂM TRA LỜI BÀI HÁT ---
+        music.addEventListener("timeupdate", () => {
+            if(!music.duration) return;
+            
+            // Cập nhật thanh tiến trình
+            const percent = (music.currentTime / music.duration) * 100;
+            progressSlider.value = percent;
+            currentTimeEl.textContent = formatTime(music.currentTime);
+            progressSlider.style.background = `linear-gradient(to right, var(--accent-color) ${percent}%, rgba(255, 255, 255, 0.1) ${percent}%)`;
+
+            // === KIỂM TRA & HIỂN THỊ LỜI BÀI HÁT ===
+            const trackLyrics = playlist[currentTrackIndex].lyrics;
+            if (trackLyrics && trackLyrics.length > 0) {
+                let activeIndex = -1;
+                // Tìm câu hát có thời gian <= thời gian hiện tại
+                for (let i = 0; i < trackLyrics.length; i++) {
+                    if (music.currentTime >= trackLyrics[i].time) {
+                        activeIndex = i;
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Nếu đổi sang câu mới thì chạy hiệu ứng gõ chữ
+                if (activeIndex !== currentLyricIndex && activeIndex >= 0) {
+                    currentLyricIndex = activeIndex;
+                    renderTypingEffect(trackLyrics[activeIndex].text);
+                }
+            }
+        });
+
+        // Khi người dùng tua thanh nhạc (kéo thanh thời gian)
+        progressSlider.addEventListener("input", function() {
+            music.currentTime = (this.value / 100) * music.duration;
+            this.style.background = `linear-gradient(to right, var(--accent-color) ${this.value}%, rgba(255, 255, 255, 0.1) ${this.value}%)`;
+            
+            // Khi tua nhạc, cần reset lại currentLyricIndex để nó tính toán và gõ lại đúng câu hiện tại
+            currentLyricIndex = -1; 
+        });
+
+        volumeSlider.addEventListener("input", function() { music.volume = this.value; });
+        function formatTime(s) { let m = Math.floor(s/60); let sec = Math.floor(s%60); return `${m}:${sec < 10 ? '0'+sec : sec}`; }
+        music.addEventListener("loadedmetadata", () => totalTimeEl.textContent = formatTime(music.duration));
+    </script>
 </body>
-
 </html>
-bây giờ chỉnh cho góc bên phải ở trên có lời bài hát chạy từng chữ khi bài hát đang được phát đi 
