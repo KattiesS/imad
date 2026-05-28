@@ -23,6 +23,20 @@
             100% { transform: rotateX(15deg) rotateY(-15deg); }
         }
 
+        /* HIỆU ỨNG TAN BIẾN (FADE OUT & BLUR) */
+        @keyframes fadeOutBlur {
+            0% {
+                opacity: 1;
+                filter: blur(0px);
+                transform: translateY(0px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                filter: blur(10px);
+                transform: translateY(-5px) scale(0.95);
+            }
+        }
+
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #050505; font-family: 'Segoe UI', sans-serif; }
         
         #bg-video { width: 100%; height: 100%; object-fit: cover; transform: scale(1.1); filter: blur(25px); transition: filter 1.5s ease; }
@@ -116,7 +130,7 @@
             -webkit-backdrop-filter: none;
             border: none;
             padding: 15px 25px;
-            max-width: 600px; /* Tăng nhẹ chiều rộng tối đa để chứa câu dài tốt hơn */
+            max-width: 600px;
             min-height: 30px;
             box-shadow: none;
             opacity: 0;
@@ -133,7 +147,13 @@
             line-height: 1.5;
             text-shadow: 0 2px 8px rgba(0,0,0,0.9);
             border-right: 2px solid transparent; 
-            white-space: nowrap; /* Bắt buộc lời bài hát luôn nằm trên 1 hàng không xuống dòng */
+            white-space: nowrap;
+            display: inline-block; /* Đổi sang inline-block để mượt mà khi gán animation */
+        }
+
+        /* Class kích hoạt hiệu ứng tan rã */
+        .is-fading-out {
+            animation: fadeOutBlur 0.5s ease-out forwards;
         }
 
         /* Hiệu ứng nháy con trỏ lúc đang đánh máy */
@@ -280,6 +300,7 @@
         let currentTrackIndex = 0; 
         let currentLyricIndex = -1; 
         let typingInterval; 
+        let isFading = false; // Biến khóa để tránh trùng lặp hiệu ứng khi tua nhanh
 
         // --- 2. KẾT NỐI VỚI CÁC PHẦN TỬ HTML ---
         const music = document.getElementById("bg-music");
@@ -310,10 +331,9 @@
             trackArtistEl.textContent = track.artist;
             
             currentLyricIndex = -1;
+            isFading = false;
             clearInterval(typingInterval);
-            lyricsContent.classList.remove("typing-cursor");
-            
-            // Đã xóa chữ "Đang chờ phát nhạc...", mặc định để trống khi load bài mới
+            lyricsContent.classList.remove("typing-cursor", "is-fading-out");
             lyricsContent.innerHTML = "";
         }
 
@@ -379,7 +399,9 @@
         // --- HÀM TẠO HIỆU ỨNG GÕ TỪNG CHỮ CHO LỜI BÀI HÁT ---
         function renderTypingEffect(text) {
             clearInterval(typingInterval);
+            lyricsContent.classList.remove("is-fading-out"); // Xóa class tan biến nếu có từ câu cũ
             lyricsContent.innerHTML = "";
+            isFading = false;
             
             if (!text) return; 
             
@@ -418,9 +440,30 @@
                     }
                 }
                 
-                if (activeIndex !== currentLyricIndex && activeIndex >= 0) {
-                    currentLyricIndex = activeIndex;
-                    renderTypingEffect(trackLyrics[activeIndex].text);
+                if (activeIndex >= 0) {
+                    // 1. Nếu chuyển hẳn sang câu lyric mới
+                    if (activeIndex !== currentLyricIndex) {
+                        currentLyricIndex = activeIndex;
+                        renderTypingEffect(trackLyrics[activeIndex].text);
+                    }
+                    
+                    // 2. TÍNH TOÁN HIỆU ỨNG TAN BIẾN (Chạy trước khi câu tiếp theo xuất hiện 0.5 giây)
+                    const currentLyricTime = trackLyrics[activeIndex].time;
+                    const nextLyric = trackLyrics[activeIndex + 1];
+                    
+                    if (nextLyric) {
+                        // Nếu còn câu tiếp theo: kích hoạt hiệu ứng lúc sắp đến câu sau 0.5s
+                        if (nextLyric.time - music.currentTime <= 0.5 && !isFading) {
+                            isFading = true;
+                            lyricsContent.classList.add("is-fading-out");
+                        }
+                    } else {
+                        // Nếu là câu cuối cùng: cho biến mất sau khi câu đó tồn tại được 4 giây
+                        if (music.currentTime - currentLyricTime >= 4.0 && !isFading) {
+                            isFading = true;
+                            lyricsContent.classList.add("is-fading-out");
+                        }
+                    }
                 }
             }
         });
@@ -429,6 +472,8 @@
             music.currentTime = (this.value / 100) * music.duration;
             this.style.background = `linear-gradient(to right, var(--accent-color) ${this.value}%, rgba(255, 255, 255, 0.1) ${this.value}%)`;
             currentLyricIndex = -1; 
+            isFading = false;
+            lyricsContent.classList.remove("is-fading-out");
         });
 
         volumeSlider.addEventListener("input", function() { music.volume = this.value; });
