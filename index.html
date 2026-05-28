@@ -6,8 +6,8 @@
     <title>imad</title>
     <link rel="icon" href="tomato.png" type="image/png">
     
-    <!-- NHÚNG FONT CHỮ TỪ GOOGLE FONTS (Quicksand & Playfair Display) -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <!-- NHÚNG FONT CHỮ DANCING SCRIPT TỪ GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -27,7 +27,6 @@
             100% { transform: rotateX(15deg) rotateY(-15deg); }
         }
 
-        /* HIỆU ỨNG HIỆN HÌNH MƯỢT MÀ (FADE IN) */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -39,7 +38,6 @@
             }
         }
 
-        /* HIỆU ỨNG TAN BIẾN (FADE OUT & BLUR) */
         @keyframes fadeOutBlur {
             0% {
                 opacity: 1;
@@ -105,7 +103,6 @@
         #volume-wrapper:hover #volume-slider-container { width: 100px; margin-left: 10px; }
         #volume-slider { width: 100px; }
 
-        /* KHUNG KÍNH MỜ GÓC TRÁI DƯỚI (INFO BÀI HÁT) */
         #track-info-box {
             position: absolute; bottom: 30px; left: 40px; z-index: 5;
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -117,7 +114,6 @@
         .track-title { color: #fff; font-size: 16px; font-weight: 600; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
         .track-artist { color: rgba(255, 255, 255, 0.6); font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* KHUNG KÍNH MỜ GÓC PHẢI DƯỚI (MẠNG XÃ HỘI) */
         #social-links-box {
             position: absolute; bottom: 30px; right: 40px; z-index: 5;
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -135,7 +131,6 @@
         .social-link.discord:hover { color: #5865F2; filter: drop-shadow(0 0 10px #5865F2); transform: translateY(-3px) scale(1.1); }
         .social-link.tiktok:hover { color: #fe2c55; filter: drop-shadow(0 0 10px #fe2c55); transform: translateY(-3px) scale(1.1); }
 
-        /* LỜI BÀI HÁT (GÓC TRÊN BÊN PHẢI) */
         #lyrics-box {
             position: absolute;
             top: 40px;
@@ -157,11 +152,11 @@
         }
 
         #lyrics-content {
-            /* TÙY CHỈNH FONT CHỮ LỜI BÀI HÁT TẠI ĐÂY */
-            font-family: 'Dancing Script', sans-serif; /* Bạn có thể đổi thành 'Playfair Display' nếu muốn chữ kiểu uốn lượn có chân */
-            font-size: 18px;                      /* Cỡ chữ lời bài hát */
-            font-weight: 700;                      /* Độ đậm nhạt (500: vừa, 700: đậm) */
-            letter-spacing: 0.5px;                 /* Khoảng cách giữa các chữ cái */
+            /* SỬ DỤNG FONT DANCING SCRIPT */
+            font-family: 'Dancing Script', cursive; 
+            font-size: 28px; /* Tăng cỡ chữ lên một chút cho dễ đọc */
+            font-weight: 700;                      
+            letter-spacing: 1px; /* Tăng khoảng cách xíu cho chữ bay bổng hơn */
             
             color: #fff;
             line-height: 1.5;
@@ -170,12 +165,10 @@
             display: inline-block; 
         }
 
-        /* Class kích hoạt khi câu mới xuất hiện */
         .is-fading-in {
             animation: fadeIn 0.3s ease-out forwards;
         }
 
-        /* Class kích hoạt hiệu ứng tan rã */
         .is-fading-out {
             animation: fadeOutBlur 0.5s ease-out forwards;
         }
@@ -245,7 +238,6 @@
     </div>
 
     <script>
-        // --- 1. DỮ LIỆU DANH SÁCH BÀI HÁT & LỜI BÀI HÁT ---
         const playlist = [
             {
                 title: "『 HIDE AND SEEK 』",
@@ -315,7 +307,6 @@
         let currentLyricIndex = -1; 
         let isFading = false; 
 
-        // --- 2. KẾT NỐI VỚI CÁC PHẦN TỬ HTML ---
         const music = document.getElementById("bg-music");
         const video = document.getElementById("bg-video");
         const discImg = document.getElementById("disc-img");
@@ -334,7 +325,6 @@
         const lyricsBox = document.getElementById("lyrics-box");
         const lyricsContent = document.getElementById("lyrics-content");
 
-        // --- 3. HÀM TẢI BÀI HÁT THEO INDEX ---
         function loadTrack(index) {
             const track = playlist[index];
             music.src = track.audio;
@@ -384,7 +374,6 @@
             }
         }
 
-        // --- 4. HÀM CHUYỂN BÀI ---
         function nextTrack() {
             currentTrackIndex++;
             if (currentTrackIndex >= playlist.length) { currentTrackIndex = 0; }
@@ -408,7 +397,6 @@
 
         music.addEventListener("ended", nextTrack);
 
-        // --- HÀM HIỂN THỊ NGUYÊN CÂU LỜI BÀI HÁT (XUẤT HIỆN LIỀN LÚC) ---
         function renderLyricsInstant(text) {
             lyricsContent.classList.remove("is-fading-out", "is-fading-in");
             isFading = false;
@@ -418,15 +406,12 @@
                 return;
             }
             
-            // Hiện nguyên câu ngay lập tức
             lyricsContent.innerHTML = text;
             
-            // Kích hoạt animation hiện hình mượt mà (Fade In)
-            void lyricsContent.offsetWidth; // Trigger reflow để kích hoạt lại animation
+            void lyricsContent.offsetWidth; 
             lyricsContent.classList.add("is-fading-in");
         }
 
-        // --- 5. ĐIỀU KHIỂN ÂM THANH & THANH THỜI GIAN VÀ KIỂM TRA LỜI BÀI HÁT ---
         music.addEventListener("timeupdate", () => {
             if(!music.duration) return;
             
@@ -435,7 +420,6 @@
             currentTimeEl.textContent = formatTime(music.currentTime);
             progressSlider.style.background = `linear-gradient(to right, var(--accent-color) ${percent}%, rgba(255, 255, 255, 0.1) ${percent}%)`;
 
-            // === KIỂM TRA & HIỂN THỊ LỜI BÀI HÁT ===
             const trackLyrics = playlist[currentTrackIndex].lyrics;
             if (trackLyrics && trackLyrics.length > 0) {
                 let activeIndex = -1;
@@ -448,25 +432,21 @@
                 }
                 
                 if (activeIndex >= 0) {
-                    // 1. Nếu chuyển hẳn sang câu lyric mới -> Hiện ngay câu mới
                     if (activeIndex !== currentLyricIndex) {
                         currentLyricIndex = activeIndex;
                         renderLyricsInstant(trackLyrics[activeIndex].text);
                     }
                     
-                    // 2. TÍNH TOÁN HIỆU ỨNG TAN BIẾN (Chạy trước khi câu tiếp theo xuất hiện 0.5 giây)
                     const currentLyricTime = trackLyrics[activeIndex].time;
                     const nextLyric = trackLyrics[activeIndex + 1];
                     
                     if (nextLyric) {
-                        // Nếu còn câu tiếp theo: kích hoạt hiệu ứng lúc sắp đến câu sau 0.5s
                         if (nextLyric.time - music.currentTime <= 0.5 && !isFading) {
                             isFading = true;
                             lyricsContent.classList.remove("is-fading-in");
                             lyricsContent.classList.add("is-fading-out");
                         }
                     } else {
-                        // Nếu là câu cuối cùng: cho biến mất sau khi câu đó tồn tại được 4 giây
                         if (music.currentTime - currentLyricTime >= 4.0 && !isFading) {
                             isFading = true;
                             lyricsContent.classList.remove("is-fading-in");
