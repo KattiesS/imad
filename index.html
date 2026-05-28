@@ -53,13 +53,6 @@
             }
         }
 
-        /* --- HIỆU ỨNG GRADIENT MÀU CHẠY CHO LỜI BÀI HÁT --- */
-        @keyframes colorFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #050505; font-family: 'Segoe UI', sans-serif; }
         
         #bg-video { width: 100%; height: 100%; object-fit: cover; transform: scale(1.1); filter: blur(25px); transition: filter 1.5s ease; }
@@ -163,19 +156,27 @@
         #lyrics-content {
             font-family: 'Bangers', cursive; 
             font-size: 38px; 
-            font-weight: 400;                     
+            font-weight: 400;                       
             letter-spacing: 2px; 
             line-height: 1.4;
             white-space: nowrap; 
             display: inline-block; 
-
-            /* --- CODE MỚI --- */
-            background: linear-gradient(90deg, #ffffff, #ffdf80, #ffb3d9, #ffffff, #b3f0ff, #ffffff);
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: colorFlow 3s linear infinite; 
             filter: drop-shadow(3px 5px 8px rgba(0, 0, 0, 0.95)); 
+        }
+
+        /* --- CSS MỚI: HIỆU ỨNG CHẠY MÀU CHO TỪNG CHỮ CÁI --- */
+        #lyrics-content span {
+            display: inline-block;
+            animation: charColorFlow 2.5s linear infinite;
+        }
+
+        @keyframes charColorFlow {
+            0% { color: #ffffff; transform: translateY(0); }
+            20% { color: #ffdf80; transform: translateY(-3px); } /* Nảy nhẹ chữ lên */
+            40% { color: #ffb3d9; transform: translateY(0); }
+            60% { color: #ffffff; }
+            80% { color: #b3f0ff; }
+            100% { color: #ffffff; }
         }
 
         .is-fading-in {
@@ -410,6 +411,7 @@
 
         music.addEventListener("ended", nextTrack);
 
+        /* --- JS ĐÃ CẬP NHẬT: TÁCH CHỮ VÀ PHÂN PHỐI THỜI GIAN TRỄ --- */
         function renderLyricsInstant(text) {
             lyricsContent.classList.remove("is-fading-out", "is-fading-in");
             isFading = false;
@@ -419,7 +421,15 @@
                 return;
             }
             
-            lyricsContent.innerHTML = text;
+            // Cắt chuỗi thành mảng các ký tự riêng lẻ
+            const chars = text.split("");
+            const styledText = chars.map((char, index) => {
+                if (char === " ") return "&nbsp;"; // Tạo khoảng trắng chuẩn HTML
+                // Mỗi ký tự sẽ chạy animation trễ hơn ký tự trước 0.08 giây để tạo làn sóng màu
+                return `<span style="animation-delay: ${index * 0.08}s">${char}</span>`;
+            }).join("");
+
+            lyricsContent.innerHTML = styledText;
             
             void lyricsContent.offsetWidth; 
             lyricsContent.classList.add("is-fading-in");
