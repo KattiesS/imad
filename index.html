@@ -129,7 +129,7 @@
             animation: levitate 3s ease-in-out infinite;
         }
 
-        /* --- HIỆU ỨNG LỜI BÀI HÁT MỚI: NEON GLOW & SMOOTH SLIDE --- */
+        /* --- HIỆU ỨNG LỜI BÀI HÁT TỐI GIẢN: HIỂN THỊ SIÊU TỐC KHÔNG TRỄ NHẠC --- */
         #lyrics-content {
             font-family: 'Bangers', cursive; 
             font-size: 42px; 
@@ -142,18 +142,16 @@
             color: #ffffff;
             -webkit-text-stroke: 1.5px #000000;
             
-            /* Trạng thái mặc định (Ẩn, rớt nhẹ xuống, mờ) */
+            /* Trạng thái ẩn: Chỉ nhấc nhẹ lên và giảm opacity, xóa bỏ hiệu ứng blur gây lag */
             opacity: 0;
-            transform: translateY(15px);
-            filter: blur(8px);
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: translateY(8px);
+            transition: opacity 0.15s ease-out, transform 0.15s ease-out;
         }
 
-        /* Trạng thái hiển thị (Rõ nét, trượt lên đúng vị trí, phát sáng Neon hồng) */
+        /* Trạng thái hiển thị: Hiện ra ngay lập tức và phát sáng */
         #lyrics-content.show-lyric {
             opacity: 1;
             transform: translateY(0);
-            filter: blur(0px);
             text-shadow: 0 0 10px var(--accent-color), 0 0 25px var(--accent-color);
         }
     </style>
@@ -318,7 +316,7 @@
             
             currentLyricIndex = -1;
             lyricsContent.classList.remove("show-lyric");
-            setTimeout(() => lyricsContent.innerHTML = "", 300);
+            lyricsContent.innerHTML = "";
         }
 
         loadTrack(currentTrackIndex);
@@ -399,32 +397,25 @@
                 }
                 
                 if (activeIndex >= 0) {
-                    // Nếu đổi sang câu mới
+                    // Đổi câu mới: Cập nhật text ngay lập tức không thông qua setTimeout để triệt tiêu độ trễ
                     if (activeIndex !== currentLyricIndex) {
                         currentLyricIndex = activeIndex;
-                        
-                        // Kéo chữ cũ xuống và làm mờ
-                        lyricsContent.classList.remove("show-lyric");
-                        
-                        // Chờ xíu rồi thay chữ mới và trượt lên
-                        setTimeout(() => {
-                            // Cập nhật text an toàn theo currentLyricIndex
-                            if(trackLyrics[currentLyricIndex]) {
-                                lyricsContent.innerHTML = trackLyrics[currentLyricIndex].text;
-                                lyricsContent.classList.add("show-lyric");
-                            }
-                        }, 350); 
+                        if(trackLyrics[currentLyricIndex]) {
+                            lyricsContent.innerHTML = trackLyrics[currentLyricIndex].text;
+                            lyricsContent.classList.add("show-lyric");
+                        }
                     }
                     
-                    // Logic mờ đi khi hết câu
+                    // Logic mờ đi mượt mà trước khi chuẩn bị sang câu tiếp theo khoảng 0.2s
                     const currentLyricTime = trackLyrics[currentLyricIndex]?.time;
                     const nextLyric = trackLyrics[currentLyricIndex + 1];
                     
                     if (nextLyric) {
-                        if (nextLyric.time - music.currentTime <= 0.4) {
+                        if (nextLyric.time - music.currentTime <= 0.2) {
                             lyricsContent.classList.remove("show-lyric");
                         }
                     } else {
+                        // Câu cuối cùng sẽ tự ẩn sau khi kết thúc 4s
                         if (music.currentTime - currentLyricTime >= 4.0) {
                             lyricsContent.classList.remove("show-lyric");
                         }
