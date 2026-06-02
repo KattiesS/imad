@@ -28,68 +28,37 @@
             100% { transform: rotateX(15deg) rotateY(-15deg); }
         }
 
-        /* --- HIỆU ỨNG PHÁO HOA NHẸ NHÀNG (DUST/SPARKS) --- */
-        .spark {
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 100;
-            opacity: 0;
-            mix-blend-mode: screen;
-            animation: sparkExplode 0.8s ease-out forwards;
-        }
-
-        @keyframes sparkExplode {
-            0% { 
-                opacity: 0.8; 
-                transform: translate(0, 0) scale(1.5); 
-                filter: blur(0.5px); 
-            }
-            100% { 
-                opacity: 0; 
-                /* Bay theo biến CSS được set trong Javascript */
-                transform: translate(var(--end-x), var(--end-y)) scale(0); 
-                filter: blur(3px); 
-            }
-        }
-
-        /* --- HIỆU ỨNG LƠ LỬNG LIÊN TỤC --- */
+        /* --- HIỆU ỨNG LƠ LỬNG LIÊN TỤC CỦA KHUNG LỜI BÀI HÁT --- */
         @keyframes levitate {
             0%, 100% { transform: translateY(-10px); }
             50% { transform: translateY(-18px); }
         }
 
-        /* --- HIỆU ỨNG NẢY KHI XUẤT HIỆN --- */
-        @keyframes popIn {
+        /* --- HIỆU ỨNG TỪNG CHỮ RƠI XUỐNG KHI XUẤT HIỆN --- */
+        @keyframes letterFallIn {
             0% {
                 opacity: 0;
-                transform: translateY(30px) scale(0.8) rotate(-3deg);
-                filter: blur(8px);
+                transform: translateY(-40px) rotate(-10deg);
             }
             60% {
                 opacity: 1;
-                transform: translateY(-5px) scale(1.05) rotate(1deg);
-                filter: blur(0px);
+                transform: translateY(5px) rotate(5deg);
             }
             100% {
                 opacity: 1;
-                transform: translateY(0) scale(1) rotate(0deg);
+                transform: translateY(0) rotate(0deg);
             }
         }
 
-        /* --- HIỆU ỨNG THỔI BAY KHI BIẾN MẤT --- */
-        @keyframes shatterFadeOut {
+        /* --- HIỆU ỨNG TỪNG CHỮ RỚT XUỐNG KHI BIẾN MẤT --- */
+        @keyframes letterDropOut {
             0% {
                 opacity: 1;
-                filter: blur(0px);
-                transform: translateY(0) scale(1);
-                letter-spacing: 3px;
+                transform: translateY(0);
             }
             100% {
                 opacity: 0;
-                filter: blur(12px);
-                transform: translateY(-30px) scale(1.15);
-                letter-spacing: 12px;
+                transform: translateY(40px) rotate(15deg);
             }
         }
 
@@ -188,7 +157,6 @@
             animation: levitate 3s ease-in-out infinite;
         }
 
-        /* --- PHẦN CSS LỜI BÀI HÁT ĐÃ ĐƯỢC CHỈNH THÀNH TRẮNG ĐEN --- */
         #lyrics-content {
             font-family: 'Bangers', cursive; 
             font-size: 42px; 
@@ -203,13 +171,20 @@
             text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.9);
         }
 
-        .is-fading-in {
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        /* --- QUẢN LÝ TỪNG CHỮ --- */
+        .lyric-char {
+            display: inline-block;
+            opacity: 0; /* Mặc định tàng hình trước khi có hiệu ứng */
         }
 
-        .is-fading-out {
-            animation: shatterFadeOut 0.5s ease-in forwards;
+        .is-falling-in .lyric-char {
+            animation: letterFallIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
+
+        .is-falling-out .lyric-char {
+            animation: letterDropOut 0.5s ease-in forwards;
+        }
+
     </style>
 </head>
 <body>
@@ -363,44 +338,6 @@
         const lyricsBox = document.getElementById("lyrics-box");
         const lyricsContent = document.getElementById("lyrics-content");
 
-        // --- HÀM TẠO HIỆU ỨNG PHÁO HOA ĐÃ CHUYỂN MÀU TRẮNG XÁM ---
-        function createSparks() {
-            const rect = lyricsContent.getBoundingClientRect();
-            const numSparks = 35; 
-            const colors = ['#ffffff', '#e0e0e0', '#cccccc', '#999999']; // Đổi mảng màu thành trắng xám
-
-            for(let i = 0; i < numSparks; i++) {
-                const spark = document.createElement('div');
-                spark.className = 'spark';
-
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                const size = Math.random() * 3 + 2; 
-                spark.style.width = size + 'px';
-                spark.style.height = size + 'px';
-                spark.style.backgroundColor = color;
-                spark.style.boxShadow = `0 0 6px ${color}`;
-
-                const startX = rect.left + Math.random() * rect.width;
-                const startY = rect.top + Math.random() * rect.height;
-                spark.style.left = startX + 'px';
-                spark.style.top = startY + 'px';
-
-                const angle = Math.random() * Math.PI * 2;
-                const distance = Math.random() * 30 + 15; 
-                const endX = Math.cos(angle) * distance;
-                const endY = Math.sin(angle) * distance - 10; 
-
-                spark.style.setProperty('--end-x', endX + 'px');
-                spark.style.setProperty('--end-y', endY + 'px');
-
-                document.body.appendChild(spark);
-
-                spark.addEventListener('animationend', () => {
-                    spark.remove();
-                });
-            }
-        }
-
         function loadTrack(index) {
             const track = playlist[index];
             music.src = track.audio;
@@ -411,7 +348,7 @@
             
             currentLyricIndex = -1;
             isFading = false;
-            lyricsContent.classList.remove("is-fading-in", "is-fading-out");
+            lyricsContent.classList.remove("is-falling-in", "is-falling-out");
             lyricsContent.innerHTML = "";
         }
 
@@ -473,8 +410,9 @@
 
         music.addEventListener("ended", nextTrack);
 
+        // --- HÀM TẠO HIỆU ỨNG TỪNG CHỮ ---
         function renderLyricsInstant(text) {
-            lyricsContent.classList.remove("is-fading-out", "is-fading-in");
+            lyricsContent.classList.remove("is-falling-out", "is-falling-in");
             isFading = false;
             
             if (!text) {
@@ -482,10 +420,19 @@
                 return;
             }
             
-            lyricsContent.innerHTML = text;
+            // Chia dòng thành từng ký tự và tạo thẻ span với độ trễ tương ứng
+            let html = "";
+            let chars = text.split("");
+            chars.forEach((char, index) => {
+                let delay = index * 0.03; // Độ trễ 0.03s cho mỗi chữ cái
+                let displayChar = char === " " ? "&nbsp;" : char;
+                html += `<span class="lyric-char" style="animation-delay: ${delay}s">${displayChar}</span>`;
+            });
+            
+            lyricsContent.innerHTML = html;
             
             void lyricsContent.offsetWidth; 
-            lyricsContent.classList.add("is-fading-in");
+            lyricsContent.classList.add("is-falling-in");
         }
 
         music.addEventListener("timeupdate", () => {
@@ -519,16 +466,14 @@
                     if (nextLyric) {
                         if (nextLyric.time - music.currentTime <= 0.5 && !isFading) {
                             isFading = true;
-                            lyricsContent.classList.remove("is-fading-in");
-                            lyricsContent.classList.add("is-fading-out");
-                            createSparks();
+                            lyricsContent.classList.remove("is-falling-in");
+                            lyricsContent.classList.add("is-falling-out");
                         }
                     } else {
                         if (music.currentTime - currentLyricTime >= 4.0 && !isFading) {
                             isFading = true;
-                            lyricsContent.classList.remove("is-fading-in");
-                            lyricsContent.classList.add("is-fading-out");
-                            createSparks();
+                            lyricsContent.classList.remove("is-falling-in");
+                            lyricsContent.classList.add("is-falling-out");
                         }
                     }
                 }
@@ -540,7 +485,7 @@
             this.style.background = `linear-gradient(to right, var(--accent-color) ${this.value}%, rgba(255, 255, 255, 0.1) ${this.value}%)`;
             currentLyricIndex = -1; 
             isFading = false;
-            lyricsContent.classList.remove("is-fading-out", "is-fading-in");
+            lyricsContent.classList.remove("is-falling-out", "is-falling-in");
         });
 
         volumeSlider.addEventListener("input", function() { music.volume = this.value; });
