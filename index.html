@@ -53,13 +53,6 @@
             }
         }
 
-        /* --- HIỆU ỨNG GRADIENT MÀU CHẠY CHO LỜI BÀI HÁT --- */
-        @keyframes colorFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         /* --- HIỆU ỨNG LƠ LỬNG LIÊN TỤC --- */
         @keyframes levitate {
             0%, 100% { transform: translateY(-10px); }
@@ -195,6 +188,7 @@
             animation: levitate 3s ease-in-out infinite;
         }
 
+        /* --- PHẦN CSS LỜI BÀI HÁT ĐÃ ĐƯỢC CHỈNH THÀNH TRẮNG ĐEN --- */
         #lyrics-content {
             font-family: 'Bangers', cursive; 
             font-size: 42px; 
@@ -204,15 +198,9 @@
             white-space: nowrap; 
             display: inline-block; 
 
-            background: linear-gradient(90deg, #ff007f, #ffdf80, #00d4ff, #ffb3d9, #ff007f);
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            
-            -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4);
-
-            animation: colorFlow 3s linear infinite; 
-            filter: drop-shadow(0px 0px 10px rgba(255, 0, 127, 0.6)) drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.9)); 
+            color: #ffffff;
+            -webkit-text-stroke: 1.5px #000000;
+            text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.9);
         }
 
         .is-fading-in {
@@ -375,17 +363,16 @@
         const lyricsBox = document.getElementById("lyrics-box");
         const lyricsContent = document.getElementById("lyrics-content");
 
-        // --- HÀM TẠO HIỆU ỨNG PHÁO HOA NHẸ (DUST) KHI CHỮ BIẾN MẤT ---
+        // --- HÀM TẠO HIỆU ỨNG PHÁO HOA ĐÃ CHUYỂN MÀU TRẮNG XÁM ---
         function createSparks() {
             const rect = lyricsContent.getBoundingClientRect();
-            const numSparks = 35; // Tăng lên 35 để bụi tỏa ra nhìn đã hơn
-            const colors = ['#ffdf80', '#ffb3d9', '#b3f0ff', '#ffffff', '#ff007f']; // Thêm màu hồng đậm vào mảng
+            const numSparks = 35; 
+            const colors = ['#ffffff', '#e0e0e0', '#cccccc', '#999999']; // Đổi mảng màu thành trắng xám
 
             for(let i = 0; i < numSparks; i++) {
                 const spark = document.createElement('div');
                 spark.className = 'spark';
 
-                // Setup màu sắc & kích thước nhẹ nhàng
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 const size = Math.random() * 3 + 2; 
                 spark.style.width = size + 'px';
@@ -393,24 +380,21 @@
                 spark.style.backgroundColor = color;
                 spark.style.boxShadow = `0 0 6px ${color}`;
 
-                // Trải đều vị trí xuất phát dọc theo dòng chữ
                 const startX = rect.left + Math.random() * rect.width;
                 const startY = rect.top + Math.random() * rect.height;
                 spark.style.left = startX + 'px';
                 spark.style.top = startY + 'px';
 
-                // Cho bay tỏa ra ngẫu nhiên
                 const angle = Math.random() * Math.PI * 2;
-                const distance = Math.random() * 30 + 15; // Bay cực gần, chỉ liti
+                const distance = Math.random() * 30 + 15; 
                 const endX = Math.cos(angle) * distance;
-                const endY = Math.sin(angle) * distance - 10; // Có xu hướng hơi bay lên trên
+                const endY = Math.sin(angle) * distance - 10; 
 
                 spark.style.setProperty('--end-x', endX + 'px');
                 spark.style.setProperty('--end-y', endY + 'px');
 
                 document.body.appendChild(spark);
 
-                // Dọn dẹp DOM khi xong animation
                 spark.addEventListener('animationend', () => {
                     spark.remove();
                 });
