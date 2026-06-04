@@ -131,7 +131,7 @@
         #lyrics-content {
             font-family: 'Bangers', cursive; 
             font-size: 36px;
-            font-weight: 400;                      
+            font-weight: 400;                       
             letter-spacing: 3px; 
             line-height: 1.4;
             white-space: nowrap; 
@@ -298,19 +298,19 @@
                 video: "marin1.mp4",
                 disc: "disc3.jpg",
                 lyrics: [
-                    { time: 0.0, text: "Katarenai nemurenai toroimerai (An unspeakable and sleepless daydream)" },
-                    { time: 5.0, text: "Anata no miteru shoutai (The true character you are seeing)" },
-                    { time: 10.0, text: "Daremo yomenai karute (Is a carte that no one can read)" },
-                    { time: 15.0, text: "Fukashigi shiritai dake (I just want to know wonder)" },
-                    { time: 20.5, text: "Uso mo genjitsu mo (Both lies and reality)" },
-                    { time: 27.5, text: "Docchi mo shinjitsu datta no hontou yo (Both of them were true in the end)" },
-                    { time: 40.5, text: "Kyou mo hitorigoto (Today as well, I'm all alone)" },
-                    { time: 48.0, text: "Nannimo muri wo shinaide  (Don't push yourself to do anything)"  },
-                    { time: 56.0, text: "Watashi aisaretai (I just want to be loved)" },
-                    { time: 62.0, text: "Uyamuya sayonara karui memai (A pitiful goodbye, I feel a light dizziness)" },
-                    { time: 67.5, text: "Anata no inai genshoukai (This is a phenomenal world without you)" },
-                    { time: 72.5, text: "Daremo yomenai karute (A carte that no one can read)" },
-                    { time: 77.0, text: "Jiishiki afuredashite (And an overflowing self-consciousness)" }
+                    { time: 0.0, duration: 4.8, text: "Katarenai nemurenai toroimerai<br><span class='sub-lyric'>(An unspeakable and sleepless daydream)</span>" },
+                    { time: 5.0, duration: 4.8, text: "Anata no miteru shoutai<br><span class='sub-lyric'>(The true character you are seeing)</span>" },
+                    { time: 10.0, duration: 4.8, text: "Daremo yomenai karute<br><span class='sub-lyric'>(Is a carte that no one can read)</span>" },
+                    { time: 15.0, duration: 5.0, text: "Fukashigi shiritai dake<br><span class='sub-lyric'>(I just want to know wonder)</span>" },
+                    { time: 20.5, duration: 6.5, text: "Uso mo genjitsu mo<br><span class='sub-lyric'>(Both lies and reality)</span>" },
+                    { time: 27.5, duration: 8.5, text: "Docchi mo shinjitsu datta no hontou yo<br><span class='sub-lyric'>(Both of them were true in the end)</span>" },
+                    { time: 40.5, duration: 7.0, text: "Kyou mo hitorigoto<br><span class='sub-lyric'>(Today as well, I'm all alone)</span>" },
+                    { time: 48.0, duration: 7.5, text: "Nannimo muri wo shinaide<br><span class='sub-lyric'>(Don't push yourself to do anything)</span>" },
+                    { time: 56.0, duration: 5.8, text: "Watashi aisaretai<br><span class='sub-lyric'>(I just want to be loved)</span>" },
+                    { time: 62.0, duration: 5.2, text: "Uyamuya sayonara karui memai<br><span class='sub-lyric'>(A pitiful goodbye, I feel a light dizziness)</span>" },
+                    { time: 67.5, duration: 4.8, text: "Anata no inai genshoukai<br><span class='sub-lyric'>(This is a phenomenal world without you)</span>" },
+                    { time: 72.5, duration: 4.2, text: "Daremo yomenai karute<br><span class='sub-lyric'>(A carte that no one can read)</span>" },
+                    { time: 77.0, duration: 6.0, text: "Jiishiki afuredashite<br><span class='sub-lyric'>(And an overflowing self-consciousness)</span>" }
                 ]
             },
             {
@@ -446,14 +446,11 @@
                     const currentLyricTime = trackLyrics[currentLyricIndex]?.time;
                     const nextLyric = trackLyrics[currentLyricIndex + 1];
                     
-                   
                     const maxDuration = trackLyrics[currentLyricIndex]?.duration || 4.5; 
 
                     if (music.currentTime - currentLyricTime >= maxDuration) {
-                       
                         lyricsContent.classList.remove("show-lyric");
                     } else if (nextLyric && (nextLyric.time - music.currentTime <= 0.2)) {
-
                         lyricsContent.classList.remove("show-lyric");
                     }
                 }
