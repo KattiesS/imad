@@ -235,7 +235,7 @@
                     { time: 1.0, text: "Yeah, it was nice to meet you and everything" },
                     { time: 4.0, text: "But there are some things you should know" },
                     { time: 6.5, text: "I'm not like those other girls you're used to" },
-                    { time: 9.5, text: "If you think you have what it takes, then I'll be right here", duration: 6.0 }, /* Thêm thử duration để fen test câu hát dài nhé */
+                    { time: 9.5, text: "If you think you have what it takes, then I'll be right here", duration: 6.0 }, 
                     { time: 15.0, text: "I've been all alone, for, oh, so long" },
                     { time: 18.0, text: "Think I'm better off just on my own (Oh)" },
                     { time: 22.0, text: "When you're looking for love, it's always hiding away" },
@@ -297,7 +297,21 @@
                 audio: "nhac3.mp3",
                 video: "marin1.mp4",
                 disc: "disc3.jpg",
-                lyrics: []
+                lyrics: [
+                    { time: 0.0, text: "Katarenai nemurenai toroimerai (An unspeakable and sleepless daydream)" },
+                    { time: 5.0, text: "Anata no miteru shoutai (The true character you are seeing)" },
+                    { time: 10.0, text: "Daremo yomenai karute (Is a carte that no one can read)" },
+                    { time: 15.0, text: "Fukashigi shiritai dake (I just want to know wonder)" },
+                    { time: 20.5, text: "Uso mo genjitsu mo (Both lies and reality)" },
+                    { time: 27.5, text: "Docchi mo shinjitsu datta no hontou yo (Both of them were true in the end)" },
+                    { time: 40.5, text: "Kyou mo hitorigoto (Today as well, I'm all alone)" },
+                    { time: 48.0, text: "Nannimo muri wo shinaide  (Don't push yourself to do anything)"  },
+                    { time: 56.0, text: "Watashi aisaretai (I just want to be loved)" },
+                    { time: 62.0, text: "Uyamuya sayonara karui memai (A pitiful goodbye, I feel a light dizziness)" },
+                    { time: 67.5, text: "Anata no inai genshoukai (This is a phenomenal world without you)" },
+                    { time: 72.5, text: "Daremo yomenai karute (A carte that no one can read)" },
+                    { time: 77.0, text: "Jiishiki afuredashite (And an overflowing self-consciousness)" }
+                ]
             },
             {
                 title: " 『 Shake Na Baby 』 ",
@@ -432,14 +446,14 @@
                     const currentLyricTime = trackLyrics[currentLyricIndex]?.time;
                     const nextLyric = trackLyrics[currentLyricIndex + 1];
                     
-                    // Lấy duration tùy chỉnh (nếu có) hoặc mặc định ẩn sau 4.5 giây
+                   
                     const maxDuration = trackLyrics[currentLyricIndex]?.duration || 4.5; 
 
                     if (music.currentTime - currentLyricTime >= maxDuration) {
-                        // Ẩn nếu quá thời gian hiển thị (khoảng nhạc dạo nghỉ dài)
+                       
                         lyricsContent.classList.remove("show-lyric");
                     } else if (nextLyric && (nextLyric.time - music.currentTime <= 0.2)) {
-                        // Ẩn mượt mà ngay sát lúc hiện câu tiếp theo
+
                         lyricsContent.classList.remove("show-lyric");
                     }
                 }
