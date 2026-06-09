@@ -303,7 +303,7 @@
                     { time: 10.0, duration: 4.8, text: "Daremo yomenai karute<br><span class='sub-lyric'>(Is a carte that no one can read)</span>" },
                     { time: 15.0, duration: 5.0, text: "Fukashigi shiritai dake<br><span class='sub-lyric'>(I just want to know wonder)</span>" },
                     { time: 20.5, duration: 6.5, text: "Uso mo genjitsu mo<br><span class='sub-lyric'>(Both lies and reality)</span>" },
-                    { time: 27.5, duration: 11.5, text: "Docchi mo shinjitsu datta no hontou yo<br><span class='sub-lyric'>(Both of them were true in the end)</span>" },
+                    { time: 27.5, duration: 8.5, text: "Docchi mo shinjitsu datta no hontou yo<br><span class='sub-lyric'>(Both of them were true in the end)</span>" },
                     { time: 40.5, duration: 7.0, text: "Kyou mo hitorigoto<br><span class='sub-lyric'>(Today as well, I'm all alone)</span>" },
                     { time: 48.0, duration: 7.5, text: "Nannimo muri wo shinaide<br><span class='sub-lyric'>(Don't push yourself to do anything)</span>" },
                     { time: 56.0, duration: 5.8, text: "Watashi aisaretai<br><span class='sub-lyric'>(I just want to be loved)</span>" },
@@ -319,40 +319,14 @@
                 audio: "nhac4.mp3",
                 video: "marin2.mp4",
                 disc: "disc4.jpg",
-                lyrics: [
-                    { time: 11.5, text: "A! Dauto na nioi! (There’s a scent of doubt in the air) " },
-                    { time: 13.5, text: "Watashi bikkuri dokkiri fundari kettari (I’m shocked and surprised, it’s just one disaster after another) " },
-                    { time: 15.5, text: "Mugamuchuu (I’m completely obsessed) " },
-                    { time: 17.0, text: "A! Auto na nioi! (There’s a scent of something forbidden) " },
-                    { time: 19.5, text: "Anata hattari bakkari unzari gakkari (You’re nothing but bluffs, I’m fed up and disappointed) " },
-                    { time: 21.5, text: "Baibai chu (I’m saying goodbye for now) " },
-                    { time: 22.5, text: "Ikasen watashi kodomo mitai na (Unfortunately, I’m acting just like a child) " },
-                    { time: 24.5, text: "Mondai shuu ga muiteru mitai de (And it seems I’m only suited for a book of problems) " },
-                    { time: 28.5, text: "Kansenshou mo aishiaitai hodo (I want to love even the ‘infection’ we share) " },
-                    { time: 31.5, text: "Dame! Dame! Koi ga juutai! (But our useless love is stuck in a traffic jam) " },
-                    { time: 34.5, text: "Zutto zutto daisuki shakena beibee (I’ll love you forever and ever, Shake Na Baby) " },
-                    { time: 36.5, text: "Yuganda hyoushiki ni susumu daarin (We’re following the twisted signs, darling) " },
-                    { time: 39.5, text: "Tokimeki daisuki shakena beibee (I love this heart-fluttering feeling, Shake Na Baby) " },
-                    { time: 42.5, text: "Watashitachi futari de zannenshou (Together, the two of us win the consolation prize) " },
-                    { time: 55.0, text: "Aa dansu no nioi (Ah, there’s a scent of a dance) " },
-                    { time: 57.5, text: "Watashi maichiru anta ni (And I’m scattering away just for you) " },
-                    { time: 59.5, text: "Mugamuchuu (I’m completely obsessed) " },
-                    { time: 60.0, text: " Aa auto na nioi (Ah, there’s a scent of something forbidden) " },
-                    { time: 63.5, text: "Watashi buttobu anta ni (I’m blown away by your vibe) " },
-                    { time: 65.5, text: "Baibai chu (I’m saying goodbye for now) " },
-                    { time: 66.5, text: "Ikasen watashi kodomo mitai na (Unfortunately, I’m acting just like a child) " },
-                    { time: 69.5, text: "Mondai shuu ga muiteru mitai de (And it seems I’m only suited for a book of problems) " },
-                    { time: 72.5, text: "Seichoutsuu mo kanjiaitai hodo (I want to feel even the growing pains with you) " },
-                    { time: 75.0, text: "Dame! Dame! Ai ga juutai! (But our useless love is stuck in a traffic jam) " },
-                    { time: 77.5, text: "Zutto zutto daisuki shakena beibee (I’ll love you forever and ever, Shake Na Baby) " },
-                    { time: 80.5, text: "Yodonda hyoushiki ni susumu daarin (We’re following the stagnant signs, darling) " },
-                    { time: 83.5, text: "Tokimeki daisuki shakena beibee (I love this heart-fluttering feeling, Shake Na Baby) " },
-                    { time: 86.0, text: "Namaiki na taido de daigasshou (We’re singing along with a cheeky attitude) " }
-                ]
+                lyrics: []
             }
-        ]; 
+        ];
+
         let currentTrackIndex = 0; 
-        let currentLyricIndex = -1;
+        let currentLyricIndex = -1; 
+
+        const music = document.getElementById("bg-music");
         const video = document.getElementById("bg-video");
         const discImg = document.getElementById("disc-img");
         const trackTitleEl = document.getElementById("track-title");
