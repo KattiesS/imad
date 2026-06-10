@@ -15,62 +15,116 @@
             --accent-color: #ff007f;
             --secondary-color: #ffaa00;
             --bg-overlay: rgba(0, 0, 0, 0.6);
+            --banner-color: #00f2fe; /* Màu xanh neon cho banner mới */
         }
 
+        /* Hoạt ảnh xoay đĩa */
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
+        /* Hoạt ảnh nghiêng khi hover đĩa */
         @keyframes tiltRock {
             0% { transform: rotateX(15deg) rotateY(-15deg); }
             50% { transform: rotateX(10deg) rotateY(15deg); }
             100% { transform: rotateX(15deg) rotateY(-15deg); }
         }
 
+        /* Hoạt ảnh bay bổng cho lyric */
         @keyframes levitate {
             0%, 100% { transform: translateY(-10px); }
             50% { transform: translateY(-18px); }
+        }
+
+        /* --- Hoạt ảnh đung đưa cho Banner mới --- */
+        @keyframes sway {
+            0% { transform: rotate(3deg); }
+            50% { transform: rotate(-3deg); }
+            100% { transform: rotate(3deg); }
         }
 
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #050505; font-family: 'Segoe UI', sans-serif; }
         
         #bg-video { width: 100%; height: 100%; object-fit: cover; transform: scale(1.1); filter: blur(25px); transition: filter 1.5s ease; }
 
-        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-overlay); display: flex; justify-content: center; align-items: center; z-index: 10; transition: opacity 1s ease; }
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-overlay); display: flex; justify-content: center; align-items: center; z-index: 20; transition: opacity 1s ease; }
 
         #play-btn { background: transparent; border: 2px solid var(--accent-color); border-radius: 50%; width: 80px; height: 80px; color: var(--accent-color); font-size: 30px; cursor: pointer; box-shadow: 0 0 15px var(--accent-color); transition: 0.3s; }
         #play-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 30px var(--accent-color); }
 
+        /* --- CSS cho Banner treo lủng lẳng (Góc trên bên trái) --- */
+        #hanging-banner-container {
+            position: absolute;
+            top: 0;
+            left: 40px; /* Cách lề trái 40px cho cân với lyrics bên phải */
+            z-index: 10;
+            transform-origin: top center; /* Gốc tọa độ hoạt ảnh ở đỉnh để tạo hiệu ứng treo */
+            animation: sway 4s ease-in-out infinite; /* Áp dụng hoạt ảnh đung đưa */
+            opacity: 0; /* Ẩn lúc đầu */
+            transition: opacity 1.5s ease 0.5s; /* Hiện ra sau cùng một chút */
+            pointer-events: none; /* Không cản trở click chuột vào video */
+        }
+
+        /* Dây treo */
+        #hanging-banner-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 40px; /* Độ dài dây treo */
+            background: linear-gradient(to bottom, #333, #666);
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        /* Khung banner */
+        #hanging-banner-content {
+            margin-top: 40px; /* Đẩy xuống dưới dây treo */
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--banner-color); /* Viền màu neon ở đỉnh banner */
+            border-radius: 4px;
+            padding: 10px 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), 
+                        /* Hiệu ứng hắt sáng neon xuống video */
+                        0 0 15px rgba(0, 242, 254, 0.2); 
+            text-align: center;
+        }
+
+        #hanging-banner-content h1 {
+            font-family: 'Bangers', cursive;
+            color: #fff;
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 2px;
+            /* Hiệu ứng chữ neon xanh */
+            text-shadow: 0 0 5px #fff, 
+                         0 0 10px var(--banner-color), 
+                         0 0 20px var(--banner-color);
+        }
+
+        #hanging-banner-content p {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- CSS Player cũ --- */
         #player-wrapper { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: 750px; max-width: 95%; z-index: 5; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
 
         .controls-row { display: flex; align-items: center; gap: 50px; margin-bottom: 30px; }
 
-        .disc-container {
-            perspective: 1000px;
-            perspective-origin: center;
-            transition: transform 0.5s ease;
-        }
+        .disc-container { perspective: 1000px; perspective-origin: center; transition: transform 0.5s ease; }
+        .disc-container:hover { animation: tiltRock 2.5s ease-in-out infinite; }
 
-        .disc-container:hover {
-            animation: tiltRock 2.5s ease-in-out infinite;
-        }
-
-        #disc-img {
-            width: 180px; height: 180px; border-radius: 50%;
-            border: 5px solid rgba(255,255,255,0.2);
-            cursor: pointer; transition: box-shadow 0.3s;
-            box-shadow: 0 0 25px rgba(255,255,255,0.3);
-            object-fit: cover;
-            animation: spin 4s linear infinite;
-            animation-play-state: paused;
-            display: block;
-        }
-        
-        .is-spinning {
-            animation-play-state: running !important;
-        }
-        
+        #disc-img { width: 180px; height: 180px; border-radius: 50%; border: 5px solid rgba(255,255,255,0.2); cursor: pointer; transition: box-shadow 0.3s; box-shadow: 0 0 25px rgba(255,255,255,0.3); object-fit: cover; animation: spin 4s linear infinite; animation-play-state: paused; display: block; }
+        .is-spinning { animation-play-state: running !important; }
         .skip-icon { width: 35px; height: 35px; fill: #aaa; cursor: pointer; transition: 0.3s; }
         .skip-icon:hover { fill: var(--accent-color); }
 
@@ -85,25 +139,11 @@
         #volume-wrapper:hover #volume-slider-container { width: 100px; margin-left: 10px; }
         #volume-slider { width: 100px; }
 
-        #track-info-box {
-            position: absolute; bottom: 30px; left: 40px; z-index: 5;
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid var(--accent-color); border-radius: 8px;
-            padding: 15px 25px; min-width: 200px; max-width: 300px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); opacity: 0; pointer-events: none;
-            transition: opacity 1.5s ease, transform 1.5s ease; transform: translateY(10px);
-        }
+        #track-info-box { position: absolute; bottom: 30px; left: 40px; z-index: 5; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid var(--accent-color); border-radius: 8px; padding: 15px 25px; min-width: 200px; max-width: 300px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); opacity: 0; pointer-events: none; transition: opacity 1.5s ease, transform 1.5s ease; transform: translateY(10px); }
         .track-title { color: #fff; font-size: 16px; font-weight: 600; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
         .track-artist { color: rgba(255, 255, 255, 0.6); font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        #social-links-box {
-            position: absolute; bottom: 30px; right: 40px; z-index: 5;
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-right: 4px solid var(--secondary-color); border-radius: 8px;
-            padding: 15px 25px; display: flex; align-items: center; gap: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); opacity: 0; pointer-events: none;
-            transition: opacity 1.5s ease, transform 1.5s ease; transform: translateY(10px);
-        }
+        #social-links-box { position: absolute; bottom: 30px; right: 40px; z-index: 5; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-right: 4px solid var(--secondary-color); border-radius: 8px; padding: 15px 25px; display: flex; align-items: center; gap: 20px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); opacity: 0; pointer-events: none; transition: opacity 1.5s ease, transform 1.5s ease; transform: translateY(10px); }
 
         .social-link { display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: all 0.3s ease; }
         .social-link svg { width: 100%; height: 100%; fill: currentColor; }
@@ -113,51 +153,10 @@
         .social-link.discord:hover { color: #5865F2; filter: drop-shadow(0 0 10px #5865F2); transform: translateY(-3px) scale(1.1); }
         .social-link.tiktok:hover { color: #fe2c55; filter: drop-shadow(0 0 10px #fe2c55); transform: translateY(-3px) scale(1.1); }
 
-        #lyrics-box {
-            position: absolute;
-            top: 40px;
-            right: 40px;
-            z-index: 5;
-            padding: 15px 25px;
-            max-width: 90vw; 
-            min-height: 50px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 1s ease;
-            text-align: right;
-            animation: levitate 3s ease-in-out infinite;
-        }
-
-        #lyrics-content {
-            font-family: 'Bangers', cursive; 
-            font-size: 36px;
-            font-weight: 400;                       
-            letter-spacing: 3px; 
-            line-height: 1.4;
-            white-space: nowrap; 
-            display: inline-block; 
-
-            color: #ffffff;
-            -webkit-text-stroke: 1.5px #000000;
-            
-            opacity: 0;
-            transform: translateY(8px);
-            transition: opacity 0.15s ease-out, transform 0.15s ease-out;
-        }
-
-        #lyrics-content.show-lyric {
-            opacity: 1;
-            transform: translateY(0);
-            text-shadow: 0 0 10px var(--accent-color), 0 0 25px var(--accent-color);
-        }
-
-        .sub-lyric {
-            font-size: 22px; 
-            color: rgba(255, 255, 255, 0.85); 
-            -webkit-text-stroke: 1px #000000; 
-            letter-spacing: 2px;
-            text-shadow: 0 0 8px var(--accent-color);
-        }
+        #lyrics-box { position: absolute; top: 40px; right: 40px; z-index: 5; padding: 15px 25px; max-width: 90vw; min-height: 50px; opacity: 0; pointer-events: none; transition: opacity 1s ease; text-align: right; animation: levitate 3s ease-in-out infinite; }
+        #lyrics-content { font-family: 'Bangers', cursive; font-size: 36px; font-weight: 400; letter-spacing: 3px; line-height: 1.4; white-space: nowrap; display: inline-block; color: #ffffff; -webkit-text-stroke: 1.5px #000000; opacity: 0; transform: translateY(8px); transition: opacity 0.15s ease-out, transform 0.15s ease-out; }
+        #lyrics-content.show-lyric { opacity: 1; transform: translateY(0); text-shadow: 0 0 10px var(--accent-color), 0 0 25px var(--accent-color); }
+        .sub-lyric { font-size: 22px; color: rgba(255, 255, 255, 0.85); -webkit-text-stroke: 1px #000000; letter-spacing: 2px; text-shadow: 0 0 8px var(--accent-color); }
     </style>
 </head>
 <body>
@@ -167,6 +166,13 @@
 
     <div id="overlay">
         <button id="play-btn" onclick="startExperience()">▶</button>
+    </div>
+
+    <div id="hanging-banner-container">
+        <div id="hanging-banner-content">
+            <h1>IMAD MUSIC</h1>
+            <p>Now Streaming</p>
+        </div>
     </div>
 
     <div id="lyrics-box">
@@ -253,7 +259,7 @@
                     { time: 59.5, text: "No, I don't chase (Chase), I don't play hide and seek (Seek)" },
                     { time: 63.0, text: "本気なら見せてよ come find me" },
                     { time: 67.0, text: "\"Girl, be mine\" (Mine) なんて信じない" },
-                    { time: 70.5, text: "Gotta show me, boy, 秘密はナシだよ" },
+                    { time: 70.5, text: "Gotta show me, boy, 秘密 là ナシだよ" },
                     { time: 74.0, text: "Yesterday, the stars aligned our way (Way)" },
                     { time: 77.5, text: "Today, I know I've been running around your brain (Brain)" },
                     { time: 81.0, text: "I want roses, no red flags, gonna say, 'さよなら bye, bye' (Bye, bye)" },
@@ -303,7 +309,7 @@
                     { time: 10.0, duration: 4.8, text: "Daremo yomenai karute<br><span class='sub-lyric'>(Is a carte that no one can read)</span>" },
                     { time: 15.0, duration: 5.0, text: "Fukashigi shiritai dake<br><span class='sub-lyric'>(I just want to know wonder)</span>" },
                     { time: 20.5, duration: 6.5, text: "Uso mo genjitsu mo<br><span class='sub-lyric'>(Both lies and reality)</span>" },
-                    { time: 27.5, duration: 8.5, text: "Docchi mo shinjitsu datta no hontou yo<br><span class='sub-lyric'>(Both of them were true in the end)</span>" },
+                    { time: 27.5, duration: 11.0, text: "Docchi mo shinjitsu datta no hontou yo<br><span class='sub-lyric'>(Both of them were true in the end)</span>" },
                     { time: 40.5, duration: 7.0, text: "Kyou mo hitorigoto<br><span class='sub-lyric'>(Today as well, I'm all alone)</span>" },
                     { time: 48.0, duration: 7.5, text: "Nannimo muri wo shinaide<br><span class='sub-lyric'>(Don't push yourself to do anything)</span>" },
                     { time: 56.0, duration: 5.8, text: "Watashi aisaretai<br><span class='sub-lyric'>(I just want to be loved)</span>" },
@@ -333,7 +339,7 @@
                     { time: 34.5, text: "Zutto zutto daisuki shakena beibee<br><span class='sub-lyric'>(I’ll love you forever and ever, Shake Na Baby)</span>" },
                     { time: 36.5, text: "Yuganda hyoushiki ni susumu daarin<br><span class='sub-lyric'>(We’re following the twisted signs, darling)</span>" },
                     { time: 39.5, text: "Tokimeki daisuki shakena beibee<br><span class='sub-lyric'>(I love this heart-fluttering feeling, Shake Na Baby)</span>" },
-                    { time: 42.5, duration: 4.5, text: "Watashitachi futari de zannenshou<br><span class='sub-lyric'>(Together, the two of us win the consolation prize)</span>" },
+                    { time: 42.5, duration: 4.0, text: "Watashitachi futari de zannenshou<br><span class='sub-lyric'>(Together, the two of us win the consolation prize)</span>" },
                     { time: 55.0, text: "Aa dansu no nioi<br><span class='sub-lyric'>(Ah, there’s a scent of a dance)</span>" },
                     { time: 57.5, text: "Watashi maichiru anta ni<br><span class='sub-lyric'>(And I’m scattering away just for you)</span>" },
                     { time: 59.5, text: "Mugamuchuu<br><span class='sub-lyric'>(I’m completely obsessed)</span>" },
