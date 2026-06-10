@@ -37,7 +37,7 @@
             50% { transform: translateY(-18px); }
         }
 
-        /* --- Hoạt ảnh đung đưa cho Banner mới --- */
+        /* --- Hoạt ảnh đung đưa cho Banner --- */
         @keyframes sway {
             0% { transform: rotate(3deg); }
             50% { transform: rotate(-3deg); }
@@ -57,13 +57,13 @@
         #hanging-banner-container {
             position: absolute;
             top: 0;
-            left: 40px; /* Cách lề trái 40px cho cân với lyrics bên phải */
+            left: 40px; 
             z-index: 10;
-            transform-origin: top center; /* Gốc tọa độ hoạt ảnh ở đỉnh để tạo hiệu ứng treo */
-            animation: sway 4s ease-in-out infinite; /* Áp dụng hoạt ảnh đung đưa */
+            transform-origin: top center; 
+            animation: sway 4s ease-in-out infinite; 
             opacity: 0; /* Ẩn lúc đầu */
-            transition: opacity 1.5s ease 0.5s; /* Hiện ra sau cùng một chút */
-            pointer-events: none; /* Không cản trở click chuột vào video */
+            transition: opacity 1.5s ease 0.5s; /* Hiệu ứng hiện ra mượt mà */
+            pointer-events: none; 
         }
 
         /* Dây treo */
@@ -74,23 +74,22 @@
             left: 50%;
             transform: translateX(-50%);
             width: 2px;
-            height: 40px; /* Độ dài dây treo */
+            height: 40px; 
             background: linear-gradient(to bottom, #333, #666);
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
         /* Khung banner */
         #hanging-banner-content {
-            margin-top: 40px; /* Đẩy xuống dưới dây treo */
+            margin-top: 40px; 
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid var(--banner-color); /* Viền màu neon ở đỉnh banner */
+            border-top: 3px solid var(--banner-color); 
             border-radius: 4px;
             padding: 10px 20px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), 
-                        /* Hiệu ứng hắt sáng neon xuống video */
                         0 0 15px rgba(0, 242, 254, 0.2); 
             text-align: center;
         }
@@ -101,7 +100,6 @@
             margin: 0;
             font-size: 24px;
             letter-spacing: 2px;
-            /* Hiệu ứng chữ neon xanh */
             text-shadow: 0 0 5px #fff, 
                          0 0 10px var(--banner-color), 
                          0 0 20px var(--banner-color);
@@ -115,7 +113,7 @@
             letter-spacing: 1px;
         }
 
-        /* --- CSS Player cũ --- */
+        /* --- CSS Player --- */
         #player-wrapper { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: 750px; max-width: 95%; z-index: 5; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
 
         .controls-row { display: flex; align-items: center; gap: 50px; margin-bottom: 30px; }
@@ -259,7 +257,7 @@
                     { time: 59.5, text: "No, I don't chase (Chase), I don't play hide and seek (Seek)" },
                     { time: 63.0, text: "本気なら見せてよ come find me" },
                     { time: 67.0, text: "\"Girl, be mine\" (Mine) なんて信じない" },
-                    { time: 70.5, text: "Gotta show me, boy, 秘密 là ナシだよ" },
+                    { time: 70.5, text: "Gotta show me, boy, 秘密はナシだよ" },
                     { time: 74.0, text: "Yesterday, the stars aligned our way (Way)" },
                     { time: 77.5, text: "Today, I know I've been running around your brain (Brain)" },
                     { time: 81.0, text: "I want roses, no red flags, gonna say, 'さよなら bye, bye' (Bye, bye)" },
@@ -339,7 +337,7 @@
                     { time: 34.5, text: "Zutto zutto daisuki shakena beibee<br><span class='sub-lyric'>(I’ll love you forever and ever, Shake Na Baby)</span>" },
                     { time: 36.5, text: "Yuganda hyoushiki ni susumu daarin<br><span class='sub-lyric'>(We’re following the twisted signs, darling)</span>" },
                     { time: 39.5, text: "Tokimeki daisuki shakena beibee<br><span class='sub-lyric'>(I love this heart-fluttering feeling, Shake Na Baby)</span>" },
-                    { time: 42.5, duration: 3.8, text: "Watashitachi futari de zannenshou<br><span class='sub-lyric'>(Together, the two of us win the consolation prize)</span>" },
+                    { time: 42.5, duration: 3.6, text: "Watashitachi futari de zannenshou<br><span class='sub-lyric'>(Together, the two of us win the consolation prize)</span>" },
                     { time: 55.0, text: "Aa dansu no nioi<br><span class='sub-lyric'>(Ah, there’s a scent of a dance)</span>" },
                     { time: 57.5, text: "Watashi maichiru anta ni<br><span class='sub-lyric'>(And I’m scattering away just for you)</span>" },
                     { time: 59.5, text: "Mugamuchuu<br><span class='sub-lyric'>(I’m completely obsessed)</span>" },
@@ -378,6 +376,9 @@
         
         const lyricsBox = document.getElementById("lyrics-box");
         const lyricsContent = document.getElementById("lyrics-content");
+        
+        // --- THÊM DÒNG NÀY ĐỂ KẾT NỐI VỚI BANNER TREO ---
+        const hangingBanner = document.getElementById("hanging-banner-container");
 
         function loadTrack(index) {
             const track = playlist[index];
@@ -412,6 +413,9 @@
 
             lyricsBox.style.opacity = "1";
             lyricsBox.style.transform = "translateY(0)";
+            
+            // --- THÊM DÒNG NÀY ĐỂ HIỆN BANNER KHI BẤM PLAY ---
+            hangingBanner.style.opacity = "1";
 
             discImg.classList.add("is-spinning");
             setTimeout(() => overlay.style.display = "none", 1000);
