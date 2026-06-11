@@ -15,6 +15,9 @@
             --accent-color: #ff007f;
             --secondary-color: #ffaa00;
             --bg-overlay: rgba(0, 0, 0, 0.6);
+            /* Màu dây xích */
+            --chain-color: #888;
+            --chain-dark: #444;
         }
 
         /* Hoạt ảnh xoay đĩa mượt mà */
@@ -29,7 +32,7 @@
             50% { transform: translateY(-18px); }
         }
 
-        /* --- Hoạt ảnh đung đưa tự động --- */
+        /* --- Hoạt ảnh đung đưa tự động mặc định --- */
         @keyframes sway {
             0% { transform: rotate(3deg); }
             50% { transform: rotate(-3deg); }
@@ -45,17 +48,17 @@
         #play-btn { background: transparent; border: 2px solid var(--accent-color); border-radius: 50%; width: 80px; height: 80px; color: var(--accent-color); font-size: 30px; cursor: pointer; box-shadow: 0 0 15px var(--accent-color); transition: 0.3s; }
         #play-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 30px var(--accent-color); }
 
-        /* --- CSS Banner tương tác mới --- */
+        /* --- CSS Banner tương tác với Dây Xích --- */
         #hanging-banner-container {
             position: absolute;
-            top: -10px; /* Đẩy lên chút xíu để giấu đầu dây */
+            top: -10px; 
             left: 40px; 
             z-index: 10;
             transform-origin: top center; 
             animation: sway 4s ease-in-out infinite; 
             opacity: 0; 
-            transition: opacity 1.5s ease 0.5s; 
-            pointer-events: none; /* Sẽ đổi thành auto khi bấm play */
+            transition: opacity 1.5s ease 0.5s, transform 0.1s linear; /* Thêm transition transform để trả về mượt hơn */
+            pointer-events: none; 
             cursor: grab;
         }
 
@@ -63,39 +66,75 @@
             cursor: grabbing;
         }
 
-        /* 2 cọng dây treo */
-        .banner-string {
+        /* Định nghĩa mắt xích nhỏ */
+        .banner-chain {
             position: absolute;
             top: 0;
-            width: 2px;
-            height: 50px; 
-            background: linear-gradient(to bottom, #444, #888);
-            box-shadow: 0 0 3px rgba(0,0,0,0.5);
+            width: 4px; /* Dây xích mảnh */
+            height: 60px; /* Chiều dài mặc định khi căng */
+            /* Tạo hình mắt xích bằng gradient */
+            background-image: repeating-linear-gradient(
+                to bottom,
+                var(--chain-color),
+                var(--chain-color) 3px,
+                transparent 3px,
+                transparent 5px,
+                var(--chain-dark) 5px,
+                var(--chain-dark) 8px
+            );
+            border-radius: 2px;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            /* Transition để tạo hiệu ứng chùng dây mượt mà */
+            transition: height 0.3s ease-out, transform 0.3s ease-out, top 0.3s ease-out;
+            transform-origin: top center;
         }
-        .banner-string.left { left: 20%; }
-        .banner-string.right { right: 20%; }
+        
+        .banner-chain.left { left: 15%; }
+        .banner-chain.right { right: 15%; }
+
+        /* --- Trạng thái DÂY CHÙNG ( Slack ) khi đang tương tác --- */
+        #hanging-banner-container.is-slack .banner-chain {
+            height: 80px; /* Dây dài ra */
+            top: -5px; /* Nhích lên chút để tạo cảm giác chùng ở đỉnh */
+        }
+        
+        /* Làm dây xích cong vào trong */
+        #hanging-banner-container.is-slack .banner-chain.left {
+            transform: rotate(15deg);
+        }
+        #hanging-banner-container.is-slack .banner-chain.right {
+            transform: rotate(-15deg);
+        }
 
         /* Khung bảng */
         #hanging-banner-content {
-            margin-top: 48px; /* Đẩy xuống chừa chỗ cho dây */
-            background: rgba(20, 20, 20, 0.7); /* Nền tối mờ, dịu mắt */
+            /* Margin-top ban đầu chừa chỗ cho dây căng */
+            margin-top: 58px; 
+            background: rgba(20, 20, 20, 0.7); 
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 8px;
-            padding: 15px 35px; /* Làm bảng to hơn */
+            padding: 15px 35px; 
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); 
             text-align: center;
-            user-select: none; /* Ngăn bôi đen khi kéo thả */
+            user-select: none; 
+            /* Transition margin để bảng nhún lên xuống khi dây chùng/căng */
+            transition: margin-top 0.3s ease-out;
+        }
+        
+        /* Khi dây chùng, bảng nhún lên trên một chút */
+        #hanging-banner-container.is-slack #hanging-banner-content {
+            margin-top: 50px;
         }
 
         #hanging-banner-content h1 {
             font-family: 'Bangers', cursive;
-            color: #f0f0f0; /* Trắng xám không chói */
+            color: #f0f0f0; 
             margin: 0;
             font-size: 28px;
             letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Bóng đen thay vì bóng neon */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); 
         }
 
         #hanging-banner-content p {
@@ -175,8 +214,8 @@
     </div>
 
     <div id="hanging-banner-container">
-        <div class="banner-string left"></div>
-        <div class="banner-string right"></div>
+        <div class="banner-chain left"></div>
+        <div class="banner-chain right"></div>
         <div id="hanging-banner-content">
             <h1>IMAD MUSIC</h1>
             <p>Now Streaming</p>
@@ -204,7 +243,7 @@
             <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.54-1.02.72-1.56.3z"/></svg>
         </a>
         <a href="https://www.discord.com/users/600683647443533854" target="_blank" class="social-link discord" title="Discord">
-            <svg viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.0777.0777 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
         </a>
         <a href="https://www.tiktok.com/@kattiess__?is_from_webapp=1&sender_device=pc" target="_blank" class="social-link tiktok" title="TikTok">
             <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.23-1.13 4.54-2.91 5.92-1.76 1.41-4.21 1.9-6.39 1.34-2.19-.55-3.99-2.07-4.88-4.09-.89-2.02-.75-4.5.39-6.39 1.13-1.89 3.09-3.15 5.25-3.41.4-.04.8-.04 1.19-.04v4.03c-.22.02-.45.02-.68.04-1.29.13-2.58.85-3.23 1.96-.65 1.12-.66 2.58-.08 3.73.57 1.15 1.76 1.92 3.04 2.11 1.28.18 2.66-.08 3.66-.88 1.01-.81 1.63-2.11 1.65-3.41.05-6.66.02-13.33.02-20z"/></svg>
@@ -271,7 +310,7 @@
                     { time: 25.5, text: "I know how boys just love to play their games" },
                     { time: 29.0, text: "They say love is (Blind), 閉じない (Eyes)" },
                     { time: 31.5, text: "握って (Tight), enjoy the (Ride)" },
-                    { time: 33.0, text: "I'm not (Easy), it's not (Hard)" },
+                    { time: 31.0, text: "I'm not (Easy), it's not (Hard)" },
                     { time: 35.0, text: "Just give a (Girl) 全て (World)" },
                     { time: 37.0, text: "何も言わなくても your eyes are saying" },
                     { time: 41.0, text: "All that I need to know from you" },
@@ -282,7 +321,7 @@
                     { time: 59.5, text: "No, I don't chase (Chase), I don't play hide and seek (Seek)" },
                     { time: 63.0, text: "本気なら見せてよ come find me" },
                     { time: 67.0, text: "\"Girl, be mine\" (Mine) なんて信じない" },
-                    { time: 70.5, text: "Gotta show me, boy, 秘密はナシだよ" },
+                    { time: 70.5, text: "Gotta show me, boy, 秘密 là ナシだよ" },
                     { time: 74.0, text: "Yesterday, the stars aligned our way (Way)" },
                     { time: 77.5, text: "Today, I know I've been running around your brain (Brain)" },
                     { time: 81.0, text: "I want roses, no red flags, gonna say, 'さよなら bye, bye' (Bye, bye)" },
@@ -402,21 +441,26 @@
         const lyricsBox = document.getElementById("lyrics-box");
         const lyricsContent = document.getElementById("lyrics-content");
         
-        // --- XỬ LÝ KÉO THẢ BANNER ---
+        // --- KẾT NỐI VỚI BANNER TREO ---
         const hangingBanner = document.getElementById("hanging-banner-container");
+        
+        // Vùng chứa đồng hồ (để tắt quay mặc định khi tương tác)
         let isDraggingBanner = false;
         let bannerAnchorX = 0;
         let bannerAnchorY = 0;
 
         hangingBanner.addEventListener('mousedown', (e) => {
             isDraggingBanner = true;
+            // BẬT TRẠNG THÁI DÂY CHÙNG
+            hangingBanner.classList.add('is-slack');
+
             // Lấy tâm điểm xoay của banner (top center)
             const rect = hangingBanner.getBoundingClientRect();
             bannerAnchorX = rect.left + rect.width / 2;
             bannerAnchorY = rect.top;
 
             hangingBanner.style.animation = 'none'; // Tắt animation đung đưa tự động
-            hangingBanner.style.transition = 'none'; // Tắt độ trễ để kéo theo tay mượt hơn
+            hangingBanner.style.transition = 'opacity 1.5s ease 0.5s, transform 0.05s linear'; // Giảm transition để kéo theo tay mượt hơn
         });
 
         document.addEventListener('mousemove', (e) => {
@@ -428,8 +472,8 @@
             // Tính góc xoay giữa điểm neo và con chuột
             let angle = Math.atan2(dx, dy) * (180 / Math.PI);
             
-            // Giới hạn không cho xoay quá lố (tối đa 45 độ)
-            angle = Math.max(-45, Math.min(45, angle)); 
+            // Giới hạn không cho xoay quá lố (tối đa 60 độ)
+            angle = Math.max(-60, Math.min(60, angle)); 
             
             // Áp dụng góc xoay (-angle để xoay đúng chiều khi kéo)
             hangingBanner.style.transform = `rotate(${-angle}deg)`;
@@ -438,18 +482,20 @@
         document.addEventListener('mouseup', () => {
             if (isDraggingBanner) {
                 isDraggingBanner = false;
+                // TẮT TRẠNG THÁI DÂY CHÙNG (Dây căng lại)
+                hangingBanner.classList.remove('is-slack');
                 
                 // Trả về thẳng đứng với hiệu ứng mượt
-                hangingBanner.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+                hangingBanner.style.transition = 'transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; // Thêm chút bounce khi trả về
                 hangingBanner.style.transform = 'rotate(0deg)';
                 
-                // Mở lại hoạt ảnh đung đưa mặc định sau khi đã thả tay
+                // Mở lại hoạt ảnh đung đưa mặc định sau khi đã thả tay một lúc
                 setTimeout(() => {
                     if (!isDraggingBanner) { 
-                        hangingBanner.style.transition = 'opacity 1.5s ease 0.5s'; 
+                        hangingBanner.style.transition = 'opacity 1.5s ease 0.5s, transform 0.1s linear'; 
                         hangingBanner.style.animation = 'sway 4s ease-in-out infinite';
                     }
-                }, 500);
+                }, 800); // Khớp với thời gian transition trả về
             }
         });
 
