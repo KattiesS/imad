@@ -18,17 +18,10 @@
             --banner-color: #00f2fe; /* Màu xanh neon cho banner mới */
         }
 
-        /* Hoạt ảnh xoay đĩa */
+        /* Hoạt ảnh xoay đĩa mượt mà */
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
-        }
-
-        /* Hoạt ảnh nghiêng khi hover đĩa */
-        @keyframes tiltRock {
-            0% { transform: rotateX(15deg) rotateY(-15deg); }
-            50% { transform: rotateX(10deg) rotateY(15deg); }
-            100% { transform: rotateX(15deg) rotateY(-15deg); }
         }
 
         /* Hoạt ảnh bay bổng cho lyric */
@@ -118,8 +111,7 @@
 
         .controls-row { display: flex; align-items: center; gap: 50px; margin-bottom: 30px; }
 
-        .disc-container { perspective: 1000px; perspective-origin: center; transition: transform 0.5s ease; }
-        .disc-container:hover { animation: tiltRock 2.5s ease-in-out infinite; }
+        .disc-container { transition: transform 0.5s ease; }
 
         #disc-img { width: 180px; height: 180px; border-radius: 50%; border: 5px solid rgba(255,255,255,0.2); cursor: pointer; transition: box-shadow 0.3s; box-shadow: 0 0 25px rgba(255,255,255,0.3); object-fit: cover; animation: spin 4s linear infinite; animation-play-state: paused; display: block; }
         .is-spinning { animation-play-state: running !important; }
