@@ -15,7 +15,6 @@
             --accent-color: #ff007f;
             --secondary-color: #ffaa00;
             --bg-overlay: rgba(0, 0, 0, 0.6);
-            --banner-color: #00f2fe; /* Màu xanh neon cho banner mới */
         }
 
         /* Hoạt ảnh xoay đĩa mượt mà */
@@ -30,7 +29,7 @@
             50% { transform: translateY(-18px); }
         }
 
-        /* --- Hoạt ảnh đung đưa cho Banner --- */
+        /* --- Hoạt ảnh đung đưa tự động --- */
         @keyframes sway {
             0% { transform: rotate(3deg); }
             50% { transform: rotate(-3deg); }
@@ -46,64 +45,81 @@
         #play-btn { background: transparent; border: 2px solid var(--accent-color); border-radius: 50%; width: 80px; height: 80px; color: var(--accent-color); font-size: 30px; cursor: pointer; box-shadow: 0 0 15px var(--accent-color); transition: 0.3s; }
         #play-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 30px var(--accent-color); }
 
-        /* --- CSS cho Banner treo lủng lẳng (Góc trên bên trái) --- */
+        /* --- CSS Banner tương tác mới --- */
         #hanging-banner-container {
             position: absolute;
-            top: 0;
+            top: -10px; /* Đẩy lên chút xíu để giấu đầu dây */
             left: 40px; 
             z-index: 10;
             transform-origin: top center; 
             animation: sway 4s ease-in-out infinite; 
-            opacity: 0; /* Ẩn lúc đầu */
-            transition: opacity 1.5s ease 0.5s; /* Hiệu ứng hiện ra mượt mà */
-            pointer-events: none; 
+            opacity: 0; 
+            transition: opacity 1.5s ease 0.5s; 
+            pointer-events: none; /* Sẽ đổi thành auto khi bấm play */
+            cursor: grab;
         }
 
-        /* Dây treo */
-        #hanging-banner-container::before {
-            content: '';
+        #hanging-banner-container:active {
+            cursor: grabbing;
+        }
+
+        /* 2 cọng dây treo */
+        .banner-string {
             position: absolute;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
             width: 2px;
-            height: 40px; 
-            background: linear-gradient(to bottom, #333, #666);
-            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            height: 50px; 
+            background: linear-gradient(to bottom, #444, #888);
+            box-shadow: 0 0 3px rgba(0,0,0,0.5);
         }
+        .banner-string.left { left: 20%; }
+        .banner-string.right { right: 20%; }
 
-        /* Khung banner */
+        /* Khung bảng */
         #hanging-banner-content {
-            margin-top: 40px; 
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid var(--banner-color); 
-            border-radius: 4px;
-            padding: 10px 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), 
-                        0 0 15px rgba(0, 242, 254, 0.2); 
+            margin-top: 48px; /* Đẩy xuống chừa chỗ cho dây */
+            background: rgba(20, 20, 20, 0.7); /* Nền tối mờ, dịu mắt */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 15px 35px; /* Làm bảng to hơn */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); 
             text-align: center;
+            user-select: none; /* Ngăn bôi đen khi kéo thả */
         }
 
         #hanging-banner-content h1 {
             font-family: 'Bangers', cursive;
-            color: #fff;
+            color: #f0f0f0; /* Trắng xám không chói */
             margin: 0;
-            font-size: 24px;
+            font-size: 28px;
             letter-spacing: 2px;
-            text-shadow: 0 0 5px #fff, 
-                         0 0 10px var(--banner-color), 
-                         0 0 20px var(--banner-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Bóng đen thay vì bóng neon */
         }
 
         #hanging-banner-content p {
-            color: rgba(255, 255, 255, 0.7);
+            color: #bbb;
             margin: 5px 0 0 0;
-            font-size: 12px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        /* Đồng hồ Live */
+        #live-clock {
+            font-family: 'Segoe UI', monospace;
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-top: 12px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 170, 0, 0.4);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 170, 0, 0.2);
         }
 
         /* --- CSS Player --- */
@@ -159,9 +175,12 @@
     </div>
 
     <div id="hanging-banner-container">
+        <div class="banner-string left"></div>
+        <div class="banner-string right"></div>
         <div id="hanging-banner-content">
             <h1>IMAD MUSIC</h1>
             <p>Now Streaming</p>
+            <div id="live-clock">00:00:00</div>
         </div>
     </div>
 
@@ -220,6 +239,20 @@
     </div>
 
     <script>
+       // Khởi tạo chạy đồng hồ
+       function updateClock() {
+            const now = new Date();
+            let h = now.getHours();
+            let m = now.getMinutes();
+            let s = now.getSeconds();
+            h = h < 10 ? '0' + h : h;
+            m = m < 10 ? '0' + m : m;
+            s = s < 10 ? '0' + s : s;
+            document.getElementById('live-clock').textContent = `${h}:${m}:${s}`;
+       }
+       setInterval(updateClock, 1000);
+       updateClock();
+
        const playlist = [
             {
                 title: "『 HIDE AND SEEK 』",
@@ -369,8 +402,56 @@
         const lyricsBox = document.getElementById("lyrics-box");
         const lyricsContent = document.getElementById("lyrics-content");
         
-        // --- THÊM DÒNG NÀY ĐỂ KẾT NỐI VỚI BANNER TREO ---
+        // --- XỬ LÝ KÉO THẢ BANNER ---
         const hangingBanner = document.getElementById("hanging-banner-container");
+        let isDraggingBanner = false;
+        let bannerAnchorX = 0;
+        let bannerAnchorY = 0;
+
+        hangingBanner.addEventListener('mousedown', (e) => {
+            isDraggingBanner = true;
+            // Lấy tâm điểm xoay của banner (top center)
+            const rect = hangingBanner.getBoundingClientRect();
+            bannerAnchorX = rect.left + rect.width / 2;
+            bannerAnchorY = rect.top;
+
+            hangingBanner.style.animation = 'none'; // Tắt animation đung đưa tự động
+            hangingBanner.style.transition = 'none'; // Tắt độ trễ để kéo theo tay mượt hơn
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDraggingBanner) return;
+            
+            const dx = e.clientX - bannerAnchorX;
+            const dy = e.clientY - bannerAnchorY;
+            
+            // Tính góc xoay giữa điểm neo và con chuột
+            let angle = Math.atan2(dx, dy) * (180 / Math.PI);
+            
+            // Giới hạn không cho xoay quá lố (tối đa 45 độ)
+            angle = Math.max(-45, Math.min(45, angle)); 
+            
+            // Áp dụng góc xoay (-angle để xoay đúng chiều khi kéo)
+            hangingBanner.style.transform = `rotate(${-angle}deg)`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDraggingBanner) {
+                isDraggingBanner = false;
+                
+                // Trả về thẳng đứng với hiệu ứng mượt
+                hangingBanner.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+                hangingBanner.style.transform = 'rotate(0deg)';
+                
+                // Mở lại hoạt ảnh đung đưa mặc định sau khi đã thả tay
+                setTimeout(() => {
+                    if (!isDraggingBanner) { 
+                        hangingBanner.style.transition = 'opacity 1.5s ease 0.5s'; 
+                        hangingBanner.style.animation = 'sway 4s ease-in-out infinite';
+                    }
+                }, 500);
+            }
+        });
 
         function loadTrack(index) {
             const track = playlist[index];
@@ -406,8 +487,9 @@
             lyricsBox.style.opacity = "1";
             lyricsBox.style.transform = "translateY(0)";
             
-            // --- THÊM DÒNG NÀY ĐỂ HIỆN BANNER KHI BẤM PLAY ---
+            // Hiển thị và bật tương tác cho banner
             hangingBanner.style.opacity = "1";
+            hangingBanner.style.pointerEvents = "auto";
 
             discImg.classList.add("is-spinning");
             setTimeout(() => overlay.style.display = "none", 1000);
