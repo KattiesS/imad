@@ -45,10 +45,10 @@
         #play-btn { background: transparent; border: 2px solid var(--accent-color); border-radius: 50%; width: 80px; height: 80px; color: var(--accent-color); font-size: 30px; cursor: pointer; box-shadow: 0 0 15px var(--accent-color); transition: 0.3s; }
         #play-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 30px var(--accent-color); }
 
-        /* --- CSS Banner Bảng Gỗ --- */
+        /* --- CSS Banner tương tác mới --- */
         #hanging-banner-container {
             position: absolute;
-            top: -10px; 
+            top: 0px; /* Đẩy lên để che bớt đầu dây tụ lại */
             left: 40px; 
             z-index: 10;
             transform-origin: top center; 
@@ -63,85 +63,90 @@
             cursor: grabbing;
         }
 
-        /* 2 cọng dây thừng */
+        /* Dây thừng treo chụm lại hình chữ V */
         .banner-string {
             position: absolute;
-            top: 0;
-            width: 6px; /* Sợi dây to hơn */
-            height: 54px; 
-            background: repeating-linear-gradient(45deg, #d3a473, #d3a473 3px, #8e5b30 3px, #8e5b30 6px);
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
-            border-radius: 3px;
+            top: -15px; /* Điểm tụ của 2 sợi dây ở trên cùng */
+            width: 2px;
+            height: 80px; 
+            /* Tạo họa tiết sọc chéo giống dây thừng mộc mạc */
+            background: repeating-linear-gradient(45deg, #a07855, #a07855 2px, #8c6342 2px, #8c6342 4px);
+            z-index: 1;
         }
-        .banner-string.left { left: 20%; transform: translateX(-50%); }
-        .banner-string.right { right: 20%; transform: translateX(50%); }
+        .banner-string.left { 
+            left: 50%;
+            transform-origin: top center;
+            transform: rotate(-38deg); /* Choãi sang trái */
+        }
+        .banner-string.right { 
+            left: 50%;
+            transform-origin: top center;
+            transform: rotate(38deg); /* Choãi sang phải */
+        }
 
-        /* Khung bảng gỗ */
+        /* Khung bảng giả gỗ đẽo tay */
         #hanging-banner-content {
-            margin-top: 48px; 
-            background-color: #5c3a21;
-            /* Tạo hiệu ứng vân sọc và màu nền gỗ */
-            background-image: 
-                repeating-linear-gradient(to right, transparent, transparent 10px, rgba(0,0,0,0.06) 10px, rgba(0,0,0,0.06) 20px),
-                linear-gradient(to bottom, #754b29, #3d2310);
-            border: 2px solid #2d1809;
-            border-bottom: 6px solid #1a0d04; /* Đáy dày tạo 3D */
-            border-radius: 5px;
-            padding: 15px 35px; 
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.8), inset 0 2px 3px rgba(255, 255, 255, 0.15); 
+            position: relative;
+            margin-top: 55px; /* Đẩy xuống chừa chỗ cho dây chữ V */
+            background: #ebd8b7; /* Màu nền gỗ sáng dịu mắt */
+            padding: 20px 45px; 
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5); /* Đổ bóng tạo chiều sâu */
             text-align: center;
             user-select: none; 
-            position: relative; /* Để ghim đinh sắt */
+            /* Dùng clip-path để cắt viền lởm chởm mô phỏng vân gỗ đẽo tự nhiên */
+            clip-path: polygon(
+                2% 5%, 25% 1%, 50% 4%, 75% 0%, 98% 4%, 
+                100% 20%, 94% 35%, 100% 50%, 93% 70%, 100% 85%, 
+                98% 96%, 75% 100%, 50% 95%, 25% 99%, 2% 95%, 
+                0% 80%, 6% 65%, 0% 50%, 5% 30%, 0% 15%
+            );
         }
 
-        /* Đinh sắt cố định bảng */
-        #hanging-banner-content::before,
-        #hanging-banner-content::after {
+        /* Tạo lỗ khoét nhỏ luồn dây thừng vào thớ gỗ */
+        #hanging-banner-content::before, #hanging-banner-content::after {
             content: '';
             position: absolute;
-            top: 6px;
-            width: 10px;
-            height: 10px;
-            background: radial-gradient(circle at 30% 30%, #a9a9a9, #222);
+            top: 15px;
+            width: 6px;
+            height: 6px;
+            background: #2b1f15;
             border-radius: 50%;
-            box-shadow: inset -1px -1px 2px rgba(0,0,0,0.8), 1px 2px 3px rgba(0,0,0,0.6);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.6), inset 1px 1px 2px black;
         }
-        #hanging-banner-content::before { left: 20%; transform: translateX(-50%); }
-        #hanging-banner-content::after { right: 20%; transform: translateX(50%); }
+        #hanging-banner-content::before { left: 24%; }
+        #hanging-banner-content::after { right: 24%; }
 
-        /* Font chữ như được sơn trắng lên bề mặt gỗ */
         #hanging-banner-content h1 {
             font-family: 'Bangers', cursive;
-            color: #fdf5e6; 
+            color: #242b33; /* Màu đen xám giống mực in mộc mạc */
             margin: 0;
-            font-size: 28px;
+            font-size: 32px;
             letter-spacing: 2px;
-            text-shadow: 1px 2px 3px rgba(0,0,0,0.9); 
+            text-shadow: none; /* Xoá bóng neon */
         }
 
         #hanging-banner-content p {
-            color: #d1bfae;
+            color: #4a5568;
             margin: 5px 0 0 0;
-            font-size: 13px;
+            font-size: 14px;
+            font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.9);
-            font-weight: bold;
+            text-shadow: none;
         }
 
-        /* Đồng hồ Live - Hiệu ứng khoét sâu vào gỗ */
+        /* Đồng hồ Live - Không khung, không nền, rất dễ nhìn */
         #live-clock {
             font-family: 'Segoe UI', monospace;
             font-size: 22px;
             font-weight: bold;
-            color: var(--secondary-color);
-            margin-top: 15px;
+            color: #242b33; /* Đồng bộ màu chữ tối để hiển thị rõ nét trên nền gỗ sáng */
+            margin-top: 12px;
             letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
-            background: #110a05; 
-            padding: 5px 12px;
-            border-radius: 4px;
-            box-shadow: inset 0 4px 8px rgba(0,0,0,0.9), 0 1px 1px rgba(255,255,255,0.15);
+            background: transparent; /* Loại bỏ hộp nền */
+            padding: 0;
+            border: none; /* Loại bỏ khung viền bao quanh */
+            text-shadow: none; 
         }
 
         /* --- CSS Player --- */
@@ -304,7 +309,7 @@
                     { time: 59.5, text: "No, I don't chase (Chase), I don't play hide and seek (Seek)" },
                     { time: 63.0, text: "本気なら見せてよ come find me" },
                     { time: 67.0, text: "\"Girl, be mine\" (Mine) なんて信じない" },
-                    { time: 70.5, text: "Gotta show me, boy, 秘密はナシだよ" },
+                    { time: 70.5, text: "Gotta show me, boy, 秘密 is ナシだよ" },
                     { time: 74.0, text: "Yesterday, the stars aligned our way (Way)" },
                     { time: 77.5, text: "Today, I know I've been running around your brain (Brain)" },
                     { time: 81.0, text: "I want roses, no red flags, gonna say, 'さよなら bye, bye' (Bye, bye)" },
@@ -432,13 +437,12 @@
 
         hangingBanner.addEventListener('mousedown', (e) => {
             isDraggingBanner = true;
-            // Lấy tâm điểm xoay của banner (top center)
             const rect = hangingBanner.getBoundingClientRect();
             bannerAnchorX = rect.left + rect.width / 2;
             bannerAnchorY = rect.top;
 
-            hangingBanner.style.animation = 'none'; // Tắt animation đung đưa tự động
-            hangingBanner.style.transition = 'none'; // Tắt độ trễ để kéo theo tay mượt hơn
+            hangingBanner.style.animation = 'none'; 
+            hangingBanner.style.transition = 'none'; 
         });
 
         document.addEventListener('mousemove', (e) => {
@@ -447,13 +451,9 @@
             const dx = e.clientX - bannerAnchorX;
             const dy = e.clientY - bannerAnchorY;
             
-            // Tính góc xoay giữa điểm neo và con chuột
             let angle = Math.atan2(dx, dy) * (180 / Math.PI);
-            
-            // Giới hạn không cho xoay quá lố (tối đa 45 độ)
             angle = Math.max(-45, Math.min(45, angle)); 
             
-            // Áp dụng góc xoay (-angle để xoay đúng chiều khi kéo)
             hangingBanner.style.transform = `rotate(${-angle}deg)`;
         });
 
@@ -461,11 +461,9 @@
             if (isDraggingBanner) {
                 isDraggingBanner = false;
                 
-                // Trả về thẳng đứng với hiệu ứng mượt
                 hangingBanner.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
                 hangingBanner.style.transform = 'rotate(0deg)';
                 
-                // Mở lại hoạt ảnh đung đưa mặc định sau khi đã thả tay
                 setTimeout(() => {
                     if (!isDraggingBanner) { 
                         hangingBanner.style.transition = 'opacity 1.5s ease 0.5s'; 
@@ -509,7 +507,6 @@
             lyricsBox.style.opacity = "1";
             lyricsBox.style.transform = "translateY(0)";
             
-            // Hiển thị và bật tương tác cho banner
             hangingBanner.style.opacity = "1";
             hangingBanner.style.pointerEvents = "auto";
 
